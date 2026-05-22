@@ -1,10 +1,13 @@
-/* eslint-disable no-unused-vars */
-import React from "react";
+import { Outlet } from "react-router";
+import NavBar from "../shared/Navbar/NavBar";
+import Footer from "../shared/Footer/Footer";
 
 const MainLayout = () => {
     return (
         <div>
-            <h1>THIS IS MAIN LAYOUT</h1>
+            <NavBar />
+            <Outlet />
+            <Footer />
         </div>
     );
 };

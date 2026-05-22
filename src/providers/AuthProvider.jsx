@@ -21,26 +21,31 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     const createUser = (email, password) => {
+        setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
     };
 
     const loginUser = (email, password) => {
+        setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     };
 
     const googleLogin = () => {
+        setLoading(true);
         return signInWithPopup(auth, googleProvider);
     };
 
+    const logoutUser = () => {
+        setLoading(true);
+        return signOut(auth);
+    };
+
     const updateUserProfile = (name, photo) => {
+        setLoading(true);
         return updateProfile(auth.currentUser, {
             displayName: name,
             photoURL: photo,
         });
-    };
-
-    const logoutUser = () => {
-        return signOut(auth);
     };
 
     useEffect(() => {
