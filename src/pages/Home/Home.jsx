@@ -5,7 +5,7 @@ import FeaturedTutors from "../../components/Home/FeaturedTutors";
 import TrustedUniversities from "../../components/Home/TrustedUniversities";
 import HowItWorks from "../../components/Home/HowItWorks";
 // import Testimonials from "../../components/Home/Testimonials";
-// import CTASection from "../../components/Home/CTASection";
+import CTASection from "../../components/Home/CTASection";
 
 const Home = () => {
     return (
@@ -15,8 +15,8 @@ const Home = () => {
             <LatestTuitions />
             <FeaturedTutors />
             <HowItWorks />
-            {/* <Testimonials />
-            <CTASection /> */}
+            {/* <Testimonials /> */}
+            <CTASection />
         </main>
     );
 };
