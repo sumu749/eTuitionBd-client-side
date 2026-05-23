@@ -10,21 +10,29 @@ const LatestTuitions = () => {
                     {[1, 2, 3, 4, 5, 6].map((item) => (
                         <div
                             key={item}
-                            className="card bg-base-100 shadow-xl border border-slate-700/60"
+                            className="bg-slate-900/90 border border-slate-800 rounded-4xl p-6"
                         >
-                            <div className="card-body">
-                                <h3 className="font-bold text-slate-100">
-                                    HSC Physics Tutor
-                                </h3>
+                            <span className="badge badge-primary">Physics</span>
 
-                                <p className="text-slate-300">
-                                    Budget: ৳8000/month
-                                </p>
+                            <h3 className="text-xl font-bold mt-4 text-slate-100">
+                                Need HSC Physics Tutor
+                            </h3>
 
-                                <button className="btn btn-primary">
-                                    View Details
-                                </button>
-                            </div>
+                            <p className="text-slate-400 mt-3">
+                                Location: Dhanmondi, Dhaka
+                            </p>
+
+                            <p className="text-slate-400">
+                                Budget: ৳8,000 / Month
+                            </p>
+
+                            <p className="text-slate-400">
+                                Class: HSC 2nd Year
+                            </p>
+
+                            <button className="btn btn-primary mt-6 rounded-full">
+                                Apply Now
+                            </button>
                         </div>
                     ))}
                 </div>
