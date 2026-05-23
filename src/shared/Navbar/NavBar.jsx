@@ -1,9 +1,19 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { GraduationCap, Menu, UserCircle } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 
 const NavBar = () => {
-    const { user } = useAuth();
+    const { user, logoutUser } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            navigate("/");
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
 
     const navLinks = [
         { name: "Home", path: "/" },
@@ -126,7 +136,9 @@ const NavBar = () => {
                                 </li>
 
                                 <li>
-                                    <button>Logout</button>
+                                    <button onClick={handleLogout}>
+                                        Logout
+                                    </button>
                                 </li>
                             </ul>
                         </div>
