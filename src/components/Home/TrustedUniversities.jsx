@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const universities = ["BUET", "DU", "NSU", "BRAC", "CUET", "RUET"];
+const universities = ["BUET", "DU", "BAU", "RU", "CUET", "RUET"];
 
 const TrustedUniversities = () => {
     return (
