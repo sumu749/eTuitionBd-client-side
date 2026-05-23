@@ -14,7 +14,7 @@ const NavBar = () => {
     ];
 
     return (
-        <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-base-200">
+        <header className="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/90 border-b border-slate-700/70">
             <div className="navbar max-w-7xl mx-auto px-4">
                 {/* Mobile */}
                 <div className="navbar-start lg:hidden">
@@ -25,7 +25,7 @@ const NavBar = () => {
 
                         <ul
                             tabIndex={0}
-                            className="menu menu-sm dropdown-content mt-3 z-1 p-3 shadow bg-base-100 rounded-box w-60"
+                            className="menu menu-sm dropdown-content mt-3 z-1 p-3 shadow bg-slate-950/95 rounded-box w-60 text-slate-100"
                         >
                             {navLinks.map((link) => (
                                 <li key={link.path}>
@@ -41,7 +41,7 @@ const NavBar = () => {
                 {/* Logo */}
                 <div className="navbar-start hidden lg:flex">
                     <NavLink to="/" className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl bg-linear-to-r from-blue-600 to-violet-600 flex items-center justify-center text-white">
+                        <div className="w-11 h-11 rounded-2xl bg-linear-to-r from-cyan-400 to-fuchsia-500 flex items-center justify-center text-slate-950">
                             <GraduationCap size={22} />
                         </div>
 
@@ -66,8 +66,8 @@ const NavBar = () => {
                                     to={link.path}
                                     className={({ isActive }) =>
                                         isActive
-                                            ? "text-primary font-semibold"
-                                            : "hover:text-primary"
+                                            ? "text-cyan-300 font-semibold"
+                                            : "hover:text-cyan-300"
                                     }
                                 >
                                     {link.name}
