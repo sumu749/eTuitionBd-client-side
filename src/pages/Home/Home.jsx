@@ -1,6 +1,6 @@
 import Hero from "../../components/Home/Hero";
 import Stats from "../../components/Home/Stats";
-// import LatestTuitions from "../../components/Home/LatestTuitions";
+import LatestTuitions from "../../components/Home/LatestTuitions";
 // import FeaturedTutors from "../../components/Home/FeaturedTutors";
 // import HowItWorks from "../../components/Home/HowItWorks";
 // import Testimonials from "../../components/Home/Testimonials";
@@ -11,8 +11,8 @@ const Home = () => {
         <>
             <Hero />
             <Stats />
-            {/* <LatestTuitions />
-            <FeaturedTutors />
+            <LatestTuitions />
+            {/* <FeaturedTutors />
             <HowItWorks />
             <Testimonials />
             <CTASection /> */}
