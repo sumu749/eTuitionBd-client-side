@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router";
 import { Mail, Lock } from "lucide-react";
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import api from "../../api/api";
 import toast from "react-hot-toast";
 
 const Login = () => {
@@ -10,6 +11,32 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const { loginUser, googleLogin } = useAuth();
     const navigate = useNavigate();
+
+    const loginEmail = async (email) => {
+        const jwtRes = await api.post("/jwt", { email });
+        localStorage.setItem("access-token", jwtRes.data.token);
+    };
+
+    const redirectByRole = async (email) => {
+        try {
+            const res = await api.get(`/users/role/${email}`);
+
+            const role = res.data.role;
+
+            if (role === "student") {
+                navigate("/student-dashboard");
+            } else if (role === "tutor") {
+                navigate("/tutor-dashboard");
+            } else if (role === "admin") {
+                navigate("/admin-dashboard");
+            } else {
+                navigate("/");
+            }
+        } catch (error) {
+            console.log(error);
+            navigate("/");
+        }
+    };
 
     const handleEmailLogin = async (e) => {
         e.preventDefault();
@@ -21,11 +48,19 @@ const Login = () => {
 
         setLoading(true);
         try {
-            await loginUser(email, password);
+            const userCredential = await loginUser(email, password);
+            await loginEmail(userCredential.user.email);
             toast.success("Login successful!");
-            navigate("/");
+
+            await redirectByRole(userCredential.user.email);
         } catch (error) {
-            toast.error(error.message || "Login failed");
+            const message =
+                error.response?.data?.message ||
+                error.response?.data ||
+                error.message ||
+                "Login failed";
+            console.error("Login error:", error);
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -33,10 +68,39 @@ const Login = () => {
 
     const handleGoogleLogin = async () => {
         setLoading(true);
+
         try {
-            await googleLogin();
+            const result = await googleLogin();
+
+            const user = result.user;
+
+            // Check user exists in DB
+            const existingUser = await api.get(`/users/${user.email}`);
+
+            // If not exists, create
+            if (!existingUser.data) {
+                await api.post("/users", {
+                    name: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    phone: "",
+                    role: "student",
+                    createdAt: new Date(),
+                });
+            }
+
+            // Generate JWT
+            await loginEmail(user.email);
+
+            // Redirect
+            await redirectByRole(user.email);
+
+            // create jwt
+            await loginEmail(user.email);
+
             toast.success("Login successful!");
-            navigate("/");
+
+            await redirectByRole(user.email);
         } catch (error) {
             toast.error(error.message || "Google login failed");
         } finally {

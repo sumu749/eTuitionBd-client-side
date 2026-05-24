@@ -1,9 +1,13 @@
-import React from "react";
+import { Outlet } from "react-router";
 
 const DashboardLayout = () => {
     return (
-        <div>
-            <h1>THIS IS DASHBOARD LAYOUT</h1>
+        <div className="min-h-screen">
+            <aside>Sidebar</aside>
+
+            <main>
+                <Outlet />
+            </main>
         </div>
     );
 };

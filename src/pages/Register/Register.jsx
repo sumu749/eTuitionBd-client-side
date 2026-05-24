@@ -55,8 +55,13 @@ const Register = () => {
 
             navigate("/");
         } catch (error) {
-            console.log(error.code, error.message);
-            toast.error(error.message || "Registration Failed");
+            const message =
+                error.response?.data?.message ||
+                error.response?.data ||
+                error.message ||
+                "Registration Failed";
+            console.error("Registration error:", error);
+            toast.error(message);
         } finally {
             setLoading(false);
         }
