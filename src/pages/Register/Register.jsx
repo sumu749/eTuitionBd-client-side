@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
+import api from "../../api/api";
 import { User, Mail, Lock, Image } from "lucide-react";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -9,6 +11,7 @@ const Register = () => {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm();
     const { createUser, updateUserProfile } = useAuth();
@@ -24,18 +27,40 @@ const Register = () => {
         setLoading(true);
 
         try {
-            await createUser(data.email, data.password);
+            // Firebase User Create
+            const result = await createUser(data.email, data.password);
+
+            // Firebase Profile Update
             await updateUserProfile(data.name, data.photo || "");
+
+            // Save User To MongoDB
+            await api.post("/users", {
+                name: data.name,
+                email: data.email,
+                phone: data.phone,
+                photoURL: data.photo || "",
+                role: data.role,
+                createdAt: new Date(),
+            });
+
+            // Generate JWT
+            const jwtRes = await api.post("/jwt", {
+                email: data.email,
+            });
+
+            // Store JWT
+            localStorage.setItem("access-token", jwtRes.data.token);
+
             toast.success("Account created successfully");
+
             navigate("/");
         } catch (error) {
-            toast.error(error.message || "Registration failed");
-            console.log(error);
+            console.log(error.code, error.message);
+            toast.error(error.message || "Registration Failed");
         } finally {
             setLoading(false);
         }
     };
-
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-16">
             <div className="w-full max-w-md">
@@ -93,6 +118,23 @@ const Register = () => {
                         </div>
 
                         <div className="relative">
+                            <input
+                                type="tel"
+                                placeholder="Phone Number"
+                                {...register("phone", {
+                                    required: "Phone number is required",
+                                })}
+                                className="input w-full bg-slate-950 border border-slate-700 text-slate-100"
+                            />
+
+                            {errors.phone && (
+                                <p className="text-xs text-rose-400 mt-1">
+                                    {errors.phone.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="relative">
                             <Image className="absolute left-4 top-4 text-slate-500" />
                             <input
                                 type="text"
@@ -124,6 +166,11 @@ const Register = () => {
                                         message:
                                             "Password must be at least 6 characters",
                                     },
+                                    pattern: {
+                                        value: /^(?=.*[A-Z])(?=.*[a-z]).+$/,
+                                        message:
+                                            "Must contain uppercase and lowercase letter",
+                                    },
                                 })}
                                 className="input w-full pl-11 bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500"
                             />
@@ -141,6 +188,9 @@ const Register = () => {
                                 placeholder="Confirm password"
                                 {...register("confirmPassword", {
                                     required: "Please confirm your password",
+                                    validate: (value) =>
+                                        value === watch("password") ||
+                                        "Passwords do not match",
                                 })}
                                 className="input w-full pl-11 bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500"
                             />
