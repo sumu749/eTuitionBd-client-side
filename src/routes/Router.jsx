@@ -7,6 +7,10 @@ import StudentDashboard from "../pages/StudentDashboard/StudentDashboard";
 import TutorDashboard from "../pages/TutorDashboard/TutorDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import DashboardLayout from "../layouts/DashboardLayout";
+import PrivateRoute from "./PrivateRoute";
+import AdminRoute from "./AdminRoute";
+import TutorRoute from "./TutorRoute";
+import StudentRoute from "./StudentRoute";
 
 export const router = createBrowserRouter([
     {
@@ -29,19 +33,35 @@ export const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <DashboardLayout />,
+        element: (
+            <PrivateRoute>
+                <DashboardLayout />
+            </PrivateRoute>
+        ),
         children: [
             {
                 path: "student",
-                element: <StudentDashboard />,
+                element: (
+                    <StudentRoute>
+                        <StudentDashboard />
+                    </StudentRoute>
+                ),
             },
             {
                 path: "tutor",
-                element: <TutorDashboard />,
+                element: (
+                    <TutorRoute>
+                        <TutorDashboard />
+                    </TutorRoute>
+                ),
             },
             {
                 path: "admin",
-                element: <AdminDashboard />,
+                element: (
+                    <AdminRoute>
+                        <AdminDashboard />
+                    </AdminRoute>
+                ),
             },
         ],
     },
