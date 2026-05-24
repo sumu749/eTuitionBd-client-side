@@ -1,12 +1,13 @@
 import { Navigate } from "react-router";
 import useTutor from "../hooks/useTutor";
+import LoadingSpinner from "../shared/LoadingSpinner/LoadingSpinner";
 
 const TutorRoute = ({ children }) => {
     const [isTutor, loading] = useTutor();
 
-    if (loading) return null;
+    if (loading) return <LoadingSpinner />;
 
-    if (!isTutor) return <Navigate to="/dashboard" replace />;
+    if (!isTutor) return <Navigate to="/unauthorized" replace />;
 
     return children;
 };

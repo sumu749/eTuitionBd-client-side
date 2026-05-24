@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home/Home";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
+import Unauthorized from "../pages/Unauthorized/Unauthorized";
 import StudentDashboard from "../pages/StudentDashboard/StudentDashboard";
 import TutorDashboard from "../pages/TutorDashboard/TutorDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "unauthorized",
+                element: <Unauthorized />,
             },
         ],
     },
