@@ -8,7 +8,7 @@ const PrivateRoute = ({ children }) => {
     if (loading) return <LoadingSpinner />;
 
     if (!user) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" state={location.pathname} replace />;
     }
 
     return children;
