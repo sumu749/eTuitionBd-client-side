@@ -4,6 +4,7 @@ import axiosSecure from "../../api/axiosSecure";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import { useState } from "react";
 
 const MyTuitions = () => {
     const { user } = useAuth();
@@ -23,6 +24,8 @@ const MyTuitions = () => {
             return res.data;
         },
     });
+
+    const [selectedTuition, setSelectedTuition] = useState(null);
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -48,6 +51,41 @@ const MyTuitions = () => {
             console.log(error);
 
             toast.error("Delete Failed");
+        }
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+
+        const updatedData = {
+            subject: form.subject.value,
+
+            classLevel: form.classLevel.value,
+
+            location: form.location.value,
+
+            budget: Number(form.budget.value),
+
+            description: form.description.value,
+        };
+
+        try {
+            await axiosSecure.patch(
+                `/tuitions/${selectedTuition._id}`,
+                updatedData,
+            );
+
+            toast.success("Updated Successfully");
+
+            document.getElementById("update_modal").close();
+
+            refetch();
+        } catch (error) {
+            console.log(error);
+
+            toast.error("Update Failed");
         }
     };
 
@@ -80,7 +118,19 @@ const MyTuitions = () => {
                                 <td>৳{tuition.budget}</td>
 
                                 <td>{tuition.status}</td>
-                                <td>
+                                <td className="space-x-2">
+                                    <button
+                                        className="btn btn-info btn-sm"
+                                        onClick={() => {
+                                            setSelectedTuition(tuition);
+                                            document
+                                                .getElementById("update_modal")
+                                                .showModal();
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
+
                                     <button
                                         onClick={() =>
                                             handleDelete(tuition._id)
@@ -98,6 +148,114 @@ const MyTuitions = () => {
                         ))}
                     </tbody>
                 </table>
+
+                <dialog id="update_modal" className="modal">
+                    <div className="modal-box bg-slate-900">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                document.getElementById("update_modal").close()
+                            }
+                            className="btn btn-sm btn-circle absolute right-4 top-4"
+                        >
+                            ✕
+                        </button>
+                        <h3 className="font-bold text-xl mb-5">
+                            Update Tuition
+                        </h3>
+
+                        {selectedTuition && (
+                            <form onSubmit={handleUpdate} className="space-y-4">
+                                <input
+                                    name="subject"
+                                    defaultValue={selectedTuition.subject}
+                                    className="
+input
+input-bordered
+w-full
+bg-slate-900
+text-white
+border-slate-700
+"
+                                />
+
+                                <input
+                                    name="classLevel"
+                                    defaultValue={selectedTuition.classLevel}
+                                    className="
+input
+input-bordered
+w-full
+bg-slate-900
+text-white
+border-slate-700
+"
+                                />
+
+                                <input
+                                    name="location"
+                                    defaultValue={selectedTuition.location}
+                                    className="
+input
+input-bordered
+w-full
+bg-slate-900
+text-white
+border-slate-700
+"
+                                />
+
+                                <input
+                                    name="budget"
+                                    type="number"
+                                    defaultValue={selectedTuition.budget}
+                                    className="
+input
+input-bordered
+w-full
+bg-slate-900
+text-white
+border-slate-700
+"
+                                />
+
+                                <textarea
+                                    name="description"
+                                    defaultValue={selectedTuition.description}
+                                    className="
+input
+input-bordered
+w-full
+bg-slate-900
+text-white
+border-slate-700
+"
+                                />
+
+                                <div className="flex gap-3">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary flex-1"
+                                    >
+                                        Save Changes
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            document
+                                                .getElementById("update_modal")
+                                                .close()
+                                        }
+                                        className="btn btn-outline flex-1"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
+                </dialog>
             </div>
         </div>
     );
