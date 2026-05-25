@@ -16,16 +16,73 @@ const Sidebar = () => {
             <h2 className="text-xl font-bold mb-8">Dashboard</h2>
 
             {isStudent && (
-                <Link
-                    to="/dashboard/student"
-                    className={`block px-4 py-2 rounded ${
-                        isActive("/dashboard/student")
-                            ? "bg-cyan-600"
-                            : "hover:bg-slate-800"
-                    }`}
-                >
-                    Student
-                </Link>
+                <div className="space-y-2">
+                    <Link
+                        to="/dashboard/student"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Dashboard
+                    </Link>
+
+                    <Link
+                        to="/dashboard/student/post-tuition"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/post-tuition")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Post Tuition
+                    </Link>
+
+                    <Link
+                        to="/dashboard/student/my-tuitions"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/my-tuitions")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        My Tuitions
+                    </Link>
+
+                    <Link
+                        to="/dashboard/student/applied-tutors"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/applied-tutors")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Applied Tutors
+                    </Link>
+
+                    <Link
+                        to="/dashboard/student/payments"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/payments")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Payments
+                    </Link>
+
+                    <Link
+                        to="/dashboard/student/profile"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/profile")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Profile Settings
+                    </Link>
+                </div>
             )}
 
             {isTutor && (

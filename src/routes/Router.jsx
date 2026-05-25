@@ -12,6 +12,11 @@ import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import TutorRoute from "./TutorRoute";
 import StudentRoute from "./StudentRoute";
+import PostTuition from "../pages/StudentDashboard/PostTuition";
+import MyTuitions from "../pages/StudentDashboard/MyTuitions";
+import AppliedTutors from "../pages/StudentDashboard/AppliedTutors";
+import Payments from "../pages/StudentDashboard/Payments";
+import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
 
 export const router = createBrowserRouter([
     {
@@ -49,6 +54,46 @@ export const router = createBrowserRouter([
                 element: (
                     <StudentRoute>
                         <StudentDashboard />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/post-tuition",
+                element: (
+                    <StudentRoute>
+                        <PostTuition />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/my-tuitions",
+                element: (
+                    <StudentRoute>
+                        <MyTuitions />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/applied-tutors",
+                element: (
+                    <StudentRoute>
+                        <AppliedTutors />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/payments",
+                element: (
+                    <StudentRoute>
+                        <Payments />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/profile",
+                element: (
+                    <StudentRoute>
+                        <ProfileSettings />
                     </StudentRoute>
                 ),
             },
