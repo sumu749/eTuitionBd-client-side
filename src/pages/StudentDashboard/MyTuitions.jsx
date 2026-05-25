@@ -1,11 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
 import axiosSecure from "../../api/axiosSecure";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
 const MyTuitions = () => {
     const { user } = useAuth();
 
-    const { data = [], isLoading } = useQuery({
+    const {
+        data = [],
+        isLoading,
+        refetch,
+    } = useQuery({
         queryKey: ["my-tuitions", user?.email],
 
         enabled: !!user?.email,
@@ -18,8 +25,31 @@ const MyTuitions = () => {
     });
 
     if (isLoading) {
-        return <span className="loading loading-spinner loading-lg"></span>;
+        return <LoadingSpinner />;
     }
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
+            title: "Delete Tuition?",
+            text: "This action cannot be undone",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            await axiosSecure.delete(`/tuitions/${id}`);
+
+            toast.success("Tuition Deleted");
+
+            refetch();
+        } catch (error) {
+            console.log(error);
+
+            toast.error("Delete Failed");
+        }
+    };
 
     return (
         <div>
@@ -51,7 +81,16 @@ const MyTuitions = () => {
 
                                 <td>{tuition.status}</td>
                                 <td>
-                                    <button className="btn btn-error btn-sm">
+                                    <button
+                                        onClick={() =>
+                                            handleDelete(tuition._id)
+                                        }
+                                        className="
+        btn
+        btn-error
+        btn-sm
+        "
+                                    >
                                         Delete
                                     </button>
                                 </td>
