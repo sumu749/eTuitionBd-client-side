@@ -13,8 +13,6 @@ const Sidebar = () => {
 
     return (
         <nav className="p-6 space-y-4">
-            <h2 className="text-xl font-bold mb-8">Dashboard</h2>
-
             {isStudent && (
                 <div className="space-y-2">
                     <Link
