@@ -34,6 +34,7 @@ const MyTuitions = () => {
                             <th>Location</th>
                             <th>Budget</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
 
@@ -49,6 +50,11 @@ const MyTuitions = () => {
                                 <td>৳{tuition.budget}</td>
 
                                 <td>{tuition.status}</td>
+                                <td>
+                                    <button className="btn btn-error btn-sm">
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
