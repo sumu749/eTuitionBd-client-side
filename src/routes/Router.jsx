@@ -21,6 +21,8 @@ import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
 import Tuitions from "../pages/Tuitions/Tuitions";
 import TuitionDetails from "../pages/Tuitions/TuitionDetails";
 import FindTutors from "../pages/Tutors/FindTutors";
+import About from "../pages/About/About";
+import Contact from "../pages/Contact/Contact";
 import MyApplications from "../pages/TutorDashboard/MyApplications";
 import OngoingApplications from "../pages/TutorDashboard/OngoingApplications";
 import Revenue from "../pages/TutorDashboard/Revenue";
@@ -49,6 +51,14 @@ export const router = createBrowserRouter([
             {
                 path: "tuitions",
                 element: <Tuitions />,
+            },
+            {
+                path: "about",
+                element: <About />,
+            },
+            {
+                path: "contact",
+                element: <Contact />,
             },
             {
                 path: "tutors",
