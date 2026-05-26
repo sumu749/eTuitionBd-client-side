@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import axiosSecure from "../../api/axiosSecure";
@@ -12,6 +12,7 @@ const TuitionDetails = () => {
     const { id } = useParams();
     const { user } = useAuth();
     const [openModal, setOpenModal] = useState(false);
+    const [hasApplied, setHasApplied] = useState(false);
     const [isTutor] = useTutor();
 
     const { data: tuition, isLoading } = useQuery({
@@ -34,62 +35,96 @@ const TuitionDetails = () => {
         },
     });
 
+    const isApplicationSubmitted = hasApplied || alreadyApplied?.applied;
+
     if (isLoading) {
         return <LoadingSpinner />;
     }
 
     return (
         <section className="max-w-5xl mx-auto px-4 py-12">
-            <div className="bg-slate-900 border border-slate-800 rounded-4xl p-8">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h1 className="text-4xl font-black">
+            <div className="mb-6 flex items-center justify-between">
+                <Link
+                    to="/tuitions"
+                    className="btn btn-ghost btn-sm rounded-full"
+                >
+                    Back to Tuition
+                </Link>
+                <div className="text-sm text-slate-400">
+                    Details · {tuition.subject}
+                </div>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-4xl p-8 shadow-lg">
+                <div className="grid md:grid-cols-3 gap-8 items-start">
+                    <div className="md:col-span-2">
+                        <h1 className="text-4xl font-extrabold text-white leading-tight">
                             {tuition.subject}
                         </h1>
 
-                        <p className="text-cyan-300 mt-2">
-                            {tuition.classLevel}
-                        </p>
+                        <div className="flex flex-wrap gap-3 mt-4 items-center">
+                            <span className="inline-flex items-center gap-2 bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm">
+                                {tuition.classLevel}
+                            </span>
+
+                            <span className="inline-flex items-center gap-2 bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm">
+                                {tuition.location}
+                            </span>
+
+                            <span className="inline-flex items-center gap-2 bg-emerald-700/10 text-emerald-300 px-3 py-1 rounded-full text-sm">
+                                ৳ {tuition.budget}
+                            </span>
+
+                            <span className="ml-auto badge badge-success">
+                                {tuition.status}
+                            </span>
+                        </div>
+
+                        <div className="mt-6 prose prose-invert text-slate-300">
+                            <h3 className="text-lg font-semibold text-white">
+                                Description
+                            </h3>
+                            <p>{tuition.description}</p>
+                        </div>
                     </div>
 
-                    <div className="badge badge-success">{tuition.status}</div>
+                    <aside className="md:col-span-1">
+                        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+                            <p className="text-sm text-slate-400">
+                                Offered Budget
+                            </p>
+                            <p className="mt-2 text-2xl font-semibold text-white">
+                                ৳ {tuition.budget}
+                            </p>
+
+                            <div className="mt-6">
+                                {isTutor && (
+                                    <button
+                                        disabled={isApplicationSubmitted}
+                                        onClick={() => setOpenModal(true)}
+                                        className="btn btn-primary w-full"
+                                    >
+                                        {isApplicationSubmitted
+                                            ? "Already Applied"
+                                            : "Apply Now"}
+                                    </button>
+                                )}
+                            </div>
+
+                            <p className="mt-3 text-xs text-slate-500">
+                                Applications are sent to the student for review.
+                                Keep your qualifications concise and relevant.
+                            </p>
+                        </div>
+                    </aside>
                 </div>
-
-                <div className="grid md:grid-cols-2 gap-6 mt-8">
-                    <div>
-                        <h3 className="font-semibold mb-2">Location</h3>
-                        <p>{tuition.location}</p>
-                    </div>
-
-                    <div>
-                        <h3 className="font-semibold mb-2">Budget</h3>
-                        <p>৳ {tuition.budget}</p>
-                    </div>
-                </div>
-
-                <div className="mt-8">
-                    <h3 className="font-semibold mb-3">Description</h3>
-
-                    <p className="text-slate-300">{tuition.description}</p>
-                </div>
-
-                {isTutor && (
-                    <button
-                        disabled={alreadyApplied?.applied}
-                        onClick={() => setOpenModal(true)}
-                        className="btn btn-primary rounded-full"
-                    >
-                        {alreadyApplied?.applied
-                            ? "Already Applied"
-                            : "Apply Now"}
-                    </button>
-                )}
             </div>
 
             <ApplyModal
                 tuition={tuition}
                 openModal={openModal}
                 setOpenModal={setOpenModal}
+                onApplied={() => setHasApplied(true)}
             />
         </section>
     );

@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import axiosSecure from "../../api/axiosSecure";
 import toast from "react-hot-toast";
 
-const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
+const ApplyModal = ({ tuition, openModal, setOpenModal, onApplied }) => {
     const { user } = useAuth();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { register, handleSubmit, reset } = useForm();
 
     const onSubmit = async (data) => {
+        setIsSubmitting(true);
         try {
             const application = {
                 tuitionId: tuition._id,
@@ -44,8 +47,11 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
 
             reset();
             setOpenModal(false);
+            onApplied?.();
         } catch (error) {
             toast.error(error.response?.data?.message || "Application failed");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -104,8 +110,14 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                             Cancel
                         </button>
 
-                        <button type="submit" className="btn btn-primary">
-                            Submit Application
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting
+                                ? "Submitting..."
+                                : "Submit Application"}
                         </button>
                     </div>
                 </form>

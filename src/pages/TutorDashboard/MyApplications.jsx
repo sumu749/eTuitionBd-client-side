@@ -304,6 +304,19 @@ const MyApplications = () => {
                                                     </button>
                                                 </div>
                                             )}
+                                            {application.status ===
+                                                "rejected" && (
+                                                <button
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            application._id,
+                                                        )
+                                                    }
+                                                    className="btn btn-error btn-sm"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 );
