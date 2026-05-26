@@ -21,8 +21,8 @@ const AdminDashboard = () => {
     return (
         <div className="space-y-8">
             <section className="rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
-                <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="max-w-2xl">
+                <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="max-w-2xl w-full">
                         <p className="text-sm uppercase tracking-[0.35em] text-cyan-400">
                             Admin portal
                         </p>
@@ -168,8 +168,8 @@ const AdminDashboard = () => {
             </section>
 
             <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
+                <div className="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="w-full lg:w-auto">
                         <p className="text-sm uppercase tracking-[0.2em] text-slate-400">
                             Quick access
                         </p>
@@ -186,7 +186,7 @@ const AdminDashboard = () => {
                 <div className="mt-6 grid gap-4 md:grid-cols-3">
                     <Link
                         to="analytics"
-                        className="group rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-cyan-400"
+                        className="group block w-full rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-cyan-400"
                     >
                         <div className="flex items-center justify-between">
                             <div>
@@ -207,7 +207,7 @@ const AdminDashboard = () => {
 
                     <Link
                         to="users"
-                        className="group rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-green-400"
+                        className="group block w-full rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-green-400"
                     >
                         <div className="flex items-center justify-between">
                             <div>
@@ -228,7 +228,7 @@ const AdminDashboard = () => {
 
                     <Link
                         to="tuitions"
-                        className="group rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-rose-400"
+                        className="group block w-full rounded-3xl border border-slate-800 bg-slate-950 p-6 transition hover:-translate-y-1 hover:border-rose-400"
                     >
                         <div className="flex items-center justify-between">
                             <div>

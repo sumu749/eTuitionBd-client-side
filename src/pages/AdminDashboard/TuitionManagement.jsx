@@ -41,8 +41,8 @@ const TuitionManagement = () => {
         <div className="space-y-8">
             {/* Header */}
 
-            <div className="flex justify-between items-center">
-                <div>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="w-full md:w-auto">
                     <h1 className="text-3xl font-black">Tuition Management</h1>
 
                     <p className="text-slate-400 mt-2">
@@ -71,7 +71,7 @@ const TuitionManagement = () => {
 
             <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="table">
+                    <table className="table w-full">
                         <thead>
                             <tr className="text-slate-400">
                                 <th>Student</th>
@@ -113,7 +113,7 @@ const TuitionManagement = () => {
                                     </td>
 
                                     <td>
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-wrap gap-2">
                                             <button
                                                 disabled={
                                                     tuition.status ===

@@ -16,7 +16,7 @@ const TransactionHistory = () => {
             <h2 className="text-2xl font-bold mb-5">Recent Transactions</h2>
 
             <div className="overflow-x-auto">
-                <table className="table">
+                <table className="table w-full">
                     <thead>
                         <tr className="text-slate-400">
                             <th>Student</th>

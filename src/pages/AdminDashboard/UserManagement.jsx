@@ -90,7 +90,7 @@ const UserManagement = () => {
             {/* Table */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="table">
+                    <table className="table w-full">
                         <thead>
                             <tr className="bg-slate-950 text-slate-300">
                                 <th>#</th>
@@ -178,18 +178,16 @@ const UserManagement = () => {
                                     </td>
 
                                     <td>
-                                        <button
-                                            onClick={() =>
-                                                handleDeleteUser(user._id)
-                                            }
-                                            className="
-                                            btn
-                                            btn-sm
-                                            btn-error
-                                            "
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
+                                        <div className="flex flex-wrap gap-2">
+                                            <button
+                                                onClick={() =>
+                                                    handleDeleteUser(user._id)
+                                                }
+                                                className="btn btn-sm btn-error"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
