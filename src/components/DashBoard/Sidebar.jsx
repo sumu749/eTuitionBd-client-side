@@ -161,6 +161,16 @@ const Sidebar = () => {
                     >
                         Tuition Management
                     </Link>
+                    <Link
+                        to="/dashboard/admin/analytics"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/admin/analytics")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Analytics
+                    </Link>
                 </div>
             )}
         </nav>

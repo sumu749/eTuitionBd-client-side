@@ -28,6 +28,7 @@ import OngoingApplications from "../pages/TutorDashboard/OngoingApplications";
 import Revenue from "../pages/TutorDashboard/Revenue";
 import UserManagement from "../pages/AdminDashboard/UserManagement";
 import TuitionManagement from "../pages/AdminDashboard/TuitionManagement";
+import AdminAnalytics from "../pages/AdminDashboard/AdminAnalytics";
 
 export const router = createBrowserRouter([
     {
@@ -186,6 +187,14 @@ export const router = createBrowserRouter([
                 element: (
                     <AdminRoute>
                         <TuitionManagement />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "admin/analytics",
+                element: (
+                    <AdminRoute>
+                        <AdminAnalytics />
                     </AdminRoute>
                 ),
             },
