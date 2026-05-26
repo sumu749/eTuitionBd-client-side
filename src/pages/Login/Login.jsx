@@ -24,11 +24,11 @@ const Login = () => {
             const role = res.data.role;
 
             if (role === "student") {
-                navigate("/student-dashboard");
+                navigate("/dashboard/student");
             } else if (role === "tutor") {
-                navigate("/tutor-dashboard");
+                navigate("/dashboard/tutor");
             } else if (role === "admin") {
-                navigate("/admin-dashboard");
+                navigate("/dashboard/admin");
             } else {
                 navigate("/");
             }
