@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Search, GraduationCap, BookOpen, Users } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const Hero = () => {
+    const navigate = useNavigate();
+
     return (
         <section className="relative overflow-hidden">
             {/* Background */}
@@ -55,7 +58,10 @@ const Hero = () => {
 
                         {/* CTA */}
                         <div className="flex flex-wrap gap-4 mt-8">
-                            <button className="btn btn-primary btn-lg rounded-full">
+                            <button
+                                onClick={() => navigate("/tutors")}
+                                className="btn btn-primary btn-lg rounded-full"
+                            >
                                 Find Tutors
                             </button>
 

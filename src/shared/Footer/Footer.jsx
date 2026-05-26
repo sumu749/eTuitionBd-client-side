@@ -1,4 +1,5 @@
 import { FaFacebook, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
+import { NavLink } from "react-router";
 
 const Footer = () => {
     return (
@@ -25,8 +26,14 @@ const Footer = () => {
                         <h3 className="font-semibold text-lg">Platform</h3>
 
                         <ul className="space-y-3 mt-4">
-                            <li>Find Tutors</li>
-                            <li>Post Tuition</li>
+                            <li>
+                                <NavLink to="/tutors">Find Tutors</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/dashboard/student/post-tuition">
+                                    Post Tuition
+                                </NavLink>
+                            </li>
                             <li>Become Tutor</li>
                             <li>Pricing</li>
                         </ul>
