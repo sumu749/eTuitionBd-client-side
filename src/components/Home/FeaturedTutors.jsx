@@ -14,9 +14,17 @@ const FeaturedTutors = () => {
 
         const fetchTutors = async () => {
             try {
-                const res = await api.get("/users?role=tutor&limit=3");
+                const res = await api.get("/users?role=tutor&limit=50");
                 if (mounted) {
-                    setTutors(res.data || []);
+                    const users = res.data || [];
+                    const sorted = users
+                        .slice()
+                        .sort(
+                            (a, b) =>
+                                new Date(b.createdAt || 0) -
+                                new Date(a.createdAt || 0),
+                        );
+                    setTutors(sorted.slice(0, 4));
                 }
             } catch {
                 if (mounted) {
@@ -54,7 +62,7 @@ const FeaturedTutors = () => {
                         No featured tutors found in the database.
                     </div>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-14">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14">
                         {tutors.map((tutor) => (
                             <motion.div
                                 whileHover={{ y: -10 }}
