@@ -18,6 +18,8 @@ import MyTuitions from "../pages/StudentDashboard/MyTuitions";
 import AppliedTutors from "../pages/StudentDashboard/AppliedTutors";
 import Payments from "../pages/StudentDashboard/Payments";
 import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
+import Tuitions from "../pages/Tuitions/Tuitions";
+import TuitionDetails from "../pages/Tuitions/TuitionDetails";
 
 export const router = createBrowserRouter([
     {
@@ -39,6 +41,14 @@ export const router = createBrowserRouter([
             {
                 path: "unauthorized",
                 element: <Unauthorized />,
+            },
+            {
+                path: "tuitions",
+                element: <Tuitions />,
+            },
+            {
+                path: "tuitions/:id",
+                element: <TuitionDetails />,
             },
         ],
     },
