@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 
@@ -19,7 +19,12 @@ const DashboardNavbar = () => {
 
     return (
         <nav className="bg-slate-900 border-b border-slate-800 px-8 py-4 flex items-center justify-between">
-            <h1 className="text-xl font-bold text-cyan-400">eTuitionBd</h1>
+            <Link
+                to="/"
+                className="text-xl font-bold text-cyan-400 hover:text-cyan-300"
+            >
+                eTuitionBd
+            </Link>
 
             <div className="flex items-center gap-6">
                 <span className="text-slate-400">

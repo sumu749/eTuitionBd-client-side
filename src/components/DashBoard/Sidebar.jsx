@@ -16,7 +16,7 @@ const Sidebar = () => {
             {isStudent && (
                 <div className="space-y-2">
                     <Link
-                        to="/dashboard/student"
+                        to="/dashboard"
                         className={`block px-4 py-2 rounded ${
                             isActive("/dashboard/student")
                                 ? "bg-cyan-600"
@@ -85,7 +85,7 @@ const Sidebar = () => {
 
             {isTutor && (
                 <Link
-                    to="/dashboard/tutor"
+                    to="/dashboard"
                     className={`block px-4 py-2 rounded ${
                         isActive("/dashboard/tutor")
                             ? "bg-cyan-600"
@@ -98,7 +98,7 @@ const Sidebar = () => {
 
             {isAdmin && (
                 <Link
-                    to="/dashboard/admin"
+                    to="/dashboard"
                     className={`block px-4 py-2 rounded ${
                         isActive("/dashboard/admin")
                             ? "bg-cyan-600"

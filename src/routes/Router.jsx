@@ -7,6 +7,7 @@ import Unauthorized from "../pages/Unauthorized/Unauthorized";
 import StudentDashboard from "../pages/StudentDashboard/StudentDashboard";
 import TutorDashboard from "../pages/TutorDashboard/TutorDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
+import Dashboard from "../pages/Dashboard/Dashboard";
 import DashboardLayout from "../layouts/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
             </PrivateRoute>
         ),
         children: [
+            {
+                index: true,
+                element: <Dashboard />,
+            },
             {
                 path: "student",
                 element: (
