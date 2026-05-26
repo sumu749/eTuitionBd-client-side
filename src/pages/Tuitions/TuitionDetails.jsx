@@ -6,9 +6,11 @@ import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
 import useTutor from "../../hooks/useTutor";
 import ApplyModal from "../../components/Tutor/ApplyModal";
+import useAuth from "../../hooks/useAuth";
 
 const TuitionDetails = () => {
     const { id } = useParams();
+    const { user } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [isTutor] = useTutor();
 
@@ -16,6 +18,18 @@ const TuitionDetails = () => {
         queryKey: ["tuition-details", id],
         queryFn: async () => {
             const res = await axiosSecure.get(`/tuitions/${id}`);
+            return res.data;
+        },
+    });
+
+    const { data: alreadyApplied } = useQuery({
+        queryKey: ["already-applied", id, user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await axiosSecure.get(
+                `/check-application?tuitionId=${id}&email=${user.email}`,
+            );
+
             return res.data;
         },
     });
@@ -60,14 +74,15 @@ const TuitionDetails = () => {
                 </div>
 
                 {isTutor && (
-                    <div className="mt-10">
-                        <button
-                            onClick={() => setOpenModal(true)}
-                            className="btn btn-primary rounded-full"
-                        >
-                            Apply Now
-                        </button>
-                    </div>
+                    <button
+                        disabled={alreadyApplied?.applied}
+                        onClick={() => setOpenModal(true)}
+                        className="btn btn-primary rounded-full"
+                    >
+                        {alreadyApplied?.applied
+                            ? "Already Applied"
+                            : "Apply Now"}
+                    </button>
                 )}
             </div>
 

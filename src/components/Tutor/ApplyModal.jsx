@@ -14,6 +14,12 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                 tuitionId: tuition._id,
 
                 studentEmail: tuition.studentEmail,
+                studentName: tuition.studentName,
+
+                tuitionSubject: tuition.subject,
+                tuitionClass: tuition.classLevel,
+                tuitionBudget: tuition.budget,
+                tuitionLocation: tuition.location,
 
                 tutorName: user.displayName,
                 tutorEmail: user.email,
@@ -24,10 +30,15 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                 expectedSalary: Number(data.expectedSalary),
 
                 status: "pending",
-                createdAt: new Date(),
+
+                appliedAt: new Date(),
             };
 
-            await axiosSecure.post("/applications", application);
+            const res = await axiosSecure.post("/applications", application);
+
+            // log and expose server response for debugging
+
+            console.log("Application POST response:", res);
 
             toast.success("Application Submitted");
 
@@ -49,13 +60,13 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                     <input
                         value={user?.displayName || ""}
                         readOnly
-                        className="input w-full"
+                        className="input w-full bg-slate-950 border-slate-700 text-slate-100"
                     />
 
                     <input
                         value={user?.email || ""}
                         readOnly
-                        className="input w-full"
+                        className="input w-full bg-slate-950 border-slate-700 text-slate-100"
                     />
 
                     <textarea
@@ -63,7 +74,7 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                         {...register("qualifications", {
                             required: true,
                         })}
-                        className="textarea w-full"
+                        className="textarea w-full bg-slate-950 border-slate-700 text-slate-100"
                     />
 
                     <input
@@ -72,7 +83,7 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                         {...register("experience", {
                             required: true,
                         })}
-                        className="input w-full"
+                        className="input w-full bg-slate-950 border-slate-700 text-slate-100"
                     />
 
                     <input
@@ -81,7 +92,7 @@ const ApplyModal = ({ tuition, openModal, setOpenModal }) => {
                         {...register("expectedSalary", {
                             required: true,
                         })}
-                        className="input w-full"
+                        className="input w-full bg-slate-950 border-slate-700 text-slate-100"
                     />
 
                     <div className="flex justify-end gap-3 pt-4">
