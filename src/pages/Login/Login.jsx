@@ -89,12 +89,6 @@ const Login = () => {
                 });
             }
 
-            // Generate JWT
-            await loginEmail(user.email);
-
-            // Redirect
-            await redirectByRole(user.email);
-
             // create jwt
             await loginEmail(user.email);
 
