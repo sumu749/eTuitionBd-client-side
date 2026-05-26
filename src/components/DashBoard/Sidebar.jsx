@@ -129,16 +129,39 @@ const Sidebar = () => {
             )}
 
             {isAdmin && (
-                <Link
-                    to="/dashboard"
-                    className={`block px-4 py-2 rounded ${
-                        isActive("/dashboard/admin")
-                            ? "bg-cyan-600"
-                            : "hover:bg-slate-800"
-                    }`}
-                >
-                    Admin
-                </Link>
+                <div className="space-y-2">
+                    <Link
+                        to="/dashboard/admin"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/admin")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Admin
+                    </Link>
+                    <Link
+                        to="/dashboard/admin/users"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/admin/users")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        User Management
+                    </Link>
+
+                    <Link
+                        to="/dashboard/admin/tuitions"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/admin/tuitions")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Tuition Management
+                    </Link>
+                </div>
             )}
         </nav>
     );

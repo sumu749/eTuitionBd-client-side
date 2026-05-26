@@ -26,6 +26,8 @@ import Contact from "../pages/Contact/Contact";
 import MyApplications from "../pages/TutorDashboard/MyApplications";
 import OngoingApplications from "../pages/TutorDashboard/OngoingApplications";
 import Revenue from "../pages/TutorDashboard/Revenue";
+import UserManagement from "../pages/AdminDashboard/UserManagement";
+import TuitionManagement from "../pages/AdminDashboard/TuitionManagement";
 
 export const router = createBrowserRouter([
     {
@@ -167,6 +169,23 @@ export const router = createBrowserRouter([
                 element: (
                     <AdminRoute>
                         <AdminDashboard />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "admin/users",
+                element: (
+                    <AdminRoute>
+                        <UserManagement />
+                    </AdminRoute>
+                ),
+            },
+
+            {
+                path: "admin/tuitions",
+                element: (
+                    <AdminRoute>
+                        <TuitionManagement />
                     </AdminRoute>
                 ),
             },
