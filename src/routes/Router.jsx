@@ -20,6 +20,9 @@ import Payments from "../pages/StudentDashboard/Payments";
 import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
 import Tuitions from "../pages/Tuitions/Tuitions";
 import TuitionDetails from "../pages/Tuitions/TuitionDetails";
+import MyApplications from "../pages/TutorDashboard/MyApplications";
+import OngoingApplications from "../pages/TutorDashboard/OngoingApplications";
+import Revenue from "../pages/TutorDashboard/Revenue";
 
 export const router = createBrowserRouter([
     {
@@ -117,6 +120,30 @@ export const router = createBrowserRouter([
                 element: (
                     <TutorRoute>
                         <TutorDashboard />
+                    </TutorRoute>
+                ),
+            },
+            {
+                path: "tutor/applications",
+                element: (
+                    <TutorRoute>
+                        <MyApplications />
+                    </TutorRoute>
+                ),
+            },
+            {
+                path: "/dashboard/tutor/ongoing",
+                element: (
+                    <TutorRoute>
+                        <OngoingApplications />
+                    </TutorRoute>
+                ),
+            },
+            {
+                path: "/dashboard/tutor/revenue",
+                element: (
+                    <TutorRoute>
+                        <Revenue />
                     </TutorRoute>
                 ),
             },

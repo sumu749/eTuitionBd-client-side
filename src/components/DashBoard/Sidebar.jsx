@@ -84,16 +84,48 @@ const Sidebar = () => {
             )}
 
             {isTutor && (
-                <Link
-                    to="/dashboard"
-                    className={`block px-4 py-2 rounded ${
-                        isActive("/dashboard/tutor")
-                            ? "bg-cyan-600"
-                            : "hover:bg-slate-800"
-                    }`}
-                >
-                    Tutor
-                </Link>
+                <div className="space-y-2">
+                    <Link
+                        to="/dashboard"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/tutor")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Tutor
+                    </Link>
+                    <Link
+                        to="/dashboard/tutor/applications"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/tutor/applications")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Applications
+                    </Link>
+                    <Link
+                        to="/dashboard/tutor/ongoing"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/tutor/ongoing")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Ongoing Sessions
+                    </Link>
+                    <Link
+                        to="/dashboard/tutor/revenue"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/tutor/revenue")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Revenue
+                    </Link>
+                </div>
             )}
 
             {isAdmin && (
