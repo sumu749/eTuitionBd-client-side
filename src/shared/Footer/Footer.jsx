@@ -1,3 +1,4 @@
+import { GraduationCap } from "lucide-react";
 import { FaFacebook, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
 import { NavLink } from "react-router";
 
@@ -7,7 +8,24 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-6 py-16">
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
                     <div>
-                        <h2 className="text-3xl font-bold">eTuitionBd</h2>
+                        {/* Logo */}
+                        <div className="navbar-start hidden lg:flex">
+                            <NavLink to="/" className="flex items-center gap-3">
+                                <div className="w-11 h-11 rounded-2xl bg-linear-to-r from-cyan-400 to-fuchsia-500 flex items-center justify-center text-slate-950">
+                                    <GraduationCap size={22} />
+                                </div>
+
+                                <div>
+                                    <h2 className="font-extrabold text-xl">
+                                        eTuitionBd
+                                    </h2>
+
+                                    <p className="text-xs text-base-content/60">
+                                        Learn Better
+                                    </p>
+                                </div>
+                            </NavLink>
+                        </div>
 
                         <p className="mt-4 text-sm opacity-80">
                             Connecting students and expert tutors through a
