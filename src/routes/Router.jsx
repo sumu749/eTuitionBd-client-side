@@ -29,6 +29,9 @@ import Revenue from "../pages/TutorDashboard/Revenue";
 import UserManagement from "../pages/AdminDashboard/UserManagement";
 import TuitionManagement from "../pages/AdminDashboard/TuitionManagement";
 import AdminAnalytics from "../pages/AdminDashboard/AdminAnalytics";
+import Checkout from "../pages/Checkout/Checkout";
+import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
+import PaymentDetails from "../pages/StudentDashboard/PaymentDetails";
 
 export const router = createBrowserRouter([
     {
@@ -126,11 +129,35 @@ export const router = createBrowserRouter([
                 ),
             },
             {
+                path: "payment-details/:id",
+                element: (
+                    <StudentRoute>
+                        <PaymentDetails />
+                    </StudentRoute>
+                ),
+            },
+            {
                 path: "student/profile",
                 element: (
                     <StudentRoute>
                         <ProfileSettings />
                     </StudentRoute>
+                ),
+            },
+            {
+                path: "checkout/:id",
+                element: (
+                    <StudentRoute>
+                        <Checkout />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "payment-success",
+                element: (
+                    <PrivateRoute>
+                        <PaymentSuccess />
+                    </PrivateRoute>
                 ),
             },
             {

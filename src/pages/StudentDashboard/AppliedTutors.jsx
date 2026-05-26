@@ -4,9 +4,11 @@ import axiosSecure from "../../api/axiosSecure";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const AppliedTutors = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const {
         data = [],
@@ -173,13 +175,10 @@ const AppliedTutors = () => {
                                         <td>
                                             <div className="flex flex-wrap gap-2">
                                                 <button
-                                                    type="button"
                                                     className="btn btn-success btn-sm"
-                                                    disabled={!isPending}
                                                     onClick={() =>
-                                                        handleStatusUpdate(
-                                                            application._id,
-                                                            "approved",
+                                                        navigate(
+                                                            `/dashboard/checkout/${application._id}`,
                                                         )
                                                     }
                                                 >
