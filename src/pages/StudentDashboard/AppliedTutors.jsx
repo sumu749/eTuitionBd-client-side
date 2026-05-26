@@ -87,7 +87,7 @@ const AppliedTutors = () => {
             </div>
 
             {data.length === 0 ? (
-                <div className="rounded-2xl border border-base-300 bg-base-100 p-8 text-center">
+                <div className="rounded-2xl border border-base-300 bg-base-100  p-8 text-center">
                     <p className="text-lg font-medium">No applications found</p>
                     <p className="mt-2 text-sm ">
                         Apply to a tutor from the tuition listings to see your
@@ -95,11 +95,14 @@ const AppliedTutors = () => {
                     </p>
                 </div>
             ) : (
-                <div className="overflow-x-auto rounded-2xl border border-base-300 bg-base-100">
+                <div className="overflow-x-auto rounded-2xl border border-base-300  bg-base-100">
                     <table className="table w-full">
                         <thead>
-                            <tr>
+                            <tr className="text-slate-500">
                                 <th>Tutor</th>
+                                <th>Subject</th>
+                                <th>Class</th>
+                                <th>Budget</th>
                                 <th>Qualification</th>
                                 <th>Experience</th>
                                 <th>Expected Salary</th>
@@ -140,6 +143,10 @@ const AppliedTutors = () => {
                                                 </div>
                                             </div>
                                         </td>
+
+                                        <td>{application.tuitionSubject}</td>
+                                        <td>{application.tuitionClass}</td>
+                                        <td>৳ {application.tuitionBudget}</td>
 
                                         <td>
                                             {application.qualifications ||
