@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axiosSecure from "../../api/axiosSecure";
+import api from "../../api/api";
 import { Star } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const FindTutors = () => {
     const [tutors, setTutors] = useState([]);
@@ -18,7 +19,7 @@ const FindTutors = () => {
         const load = async () => {
             try {
                 const [tRes, roleRes] = await Promise.all([
-                    axiosSecure.get("/users?role=tutor"),
+                    api.get("/public-tutors"),
                     user?.email
                         ? axiosSecure.get(`/users/role/${user.email}`)
                         : Promise.resolve({ data: {} }),
@@ -101,16 +102,12 @@ const FindTutors = () => {
                                             <button className="btn btn-primary rounded-full flex-1">
                                                 Apply
                                             </button>
-                                            <button
-                                                className="btn btn-outline rounded-full"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/tutors/${tutor.id || ""}`,
-                                                    )
-                                                }
+                                            <Link
+                                                to={`/tutors/${tutor._id || tutor.id || ""}`}
+                                                className="btn btn-primary rounded-full"
                                             >
-                                                View Profile
-                                            </button>
+                                                View Details
+                                            </Link>
                                         </>
                                     ) : userRole === "tutor" ? (
                                         <>

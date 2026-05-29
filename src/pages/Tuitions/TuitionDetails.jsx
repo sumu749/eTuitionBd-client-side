@@ -27,15 +27,15 @@ const TuitionDetails = () => {
         queryKey: ["already-applied", id, user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(
-                `/check-application?tuitionId=${id}&email=${user.email}`,
+            const res = await axiosSecure.get(`/applications/${user.email}`);
+            const applications = res.data || [];
+            return applications.find(
+                (application) => application.tuitionId === id,
             );
-
-            return res.data;
         },
     });
 
-    const isApplicationSubmitted = hasApplied || alreadyApplied?.applied;
+    const isApplicationSubmitted = hasApplied || !!alreadyApplied;
 
     if (isLoading) {
         return <LoadingSpinner />;

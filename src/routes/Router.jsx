@@ -33,6 +33,7 @@ import AdminAnalytics from "../pages/AdminDashboard/AdminAnalytics";
 import Checkout from "../pages/Checkout/Checkout";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import PaymentDetails from "../pages/StudentDashboard/PaymentDetails";
+import TutorDetails from "../pages/Tutors/TutorDetails";
 
 export const router = createBrowserRouter([
     {
@@ -70,6 +71,10 @@ export const router = createBrowserRouter([
             {
                 path: "tutors",
                 element: <FindTutors />,
+            },
+            {
+                path: "tutors/:id",
+                element: <TutorDetails />,
             },
             {
                 path: "tuitions/:id",

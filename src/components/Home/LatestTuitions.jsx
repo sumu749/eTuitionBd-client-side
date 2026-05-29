@@ -1,21 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { MapPin, BookOpen, Wallet } from "lucide-react";
-import axiosSecure from "../../api/axiosSecure";
+import api from "../../api/api";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
 const LatestTuitions = () => {
     const { data: tuitions = [], isLoading } = useQuery({
         queryKey: ["latest-tuitions"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/tuitions");
-            const sorted = res.data?.slice().sort((a, b) => {
-                if (a.createdAt && b.createdAt) {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                }
-                return 0;
-            });
-            return sorted || [];
+            const res = await api.get("/approved-tuitions?limit=6");
+
+            return res.data.tuitions || [];
         },
     });
 
