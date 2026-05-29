@@ -1,14 +1,18 @@
+/* eslint-disable indent */
 import { useEffect, useState } from "react";
 import axiosSecure from "../../api/axiosSecure";
 import api from "../../api/api";
-import { Star } from "lucide-react";
+import { Star, Bookmark, BookmarkMinus } from "lucide-react";
+import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router";
+import { getSavedIds, toggleBookmark } from "../../utils/bookmarkUtils";
 
 const FindTutors = () => {
     const [tutors, setTutors] = useState([]);
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [, setBookmarkReload] = useState(0);
 
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -43,6 +47,22 @@ const FindTutors = () => {
 
         return () => (mounted = false);
     }, [user]);
+
+    const bookmarkedTutorIds = user?.email
+        ? getSavedIds("tutor", user.email)
+        : [];
+
+    const handleBookmark = (tutor) => {
+        if (!user?.email) {
+            toast("Login to save bookmarks", { duration: 3000 });
+            navigate("/login");
+            return;
+        }
+
+        const isSaved = toggleBookmark("tutor", tutor, user.email);
+        setBookmarkReload((prev) => prev + 1);
+        toast.success(isSaved ? "Tutor saved" : "Tutor removed");
+    };
 
     return (
         <div className="max-w-7xl mx-auto px-6 py-12">
@@ -99,15 +119,42 @@ const FindTutors = () => {
                                 <div className="mt-4 flex gap-2">
                                     {userRole === "student" ? (
                                         <>
-                                            <button className="btn btn-primary rounded-full flex-1">
-                                                Apply
-                                            </button>
-                                            <Link
-                                                to={`/tutors/${tutor._id || tutor.id || ""}`}
-                                                className="btn btn-primary rounded-full"
-                                            >
-                                                View Details
-                                            </Link>
+                                            <div className="flex flex-wrap gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleBookmark(tutor)
+                                                    }
+                                                    className={`btn btn-outline btn-sm rounded-full ${
+                                                        bookmarkedTutorIds.includes(
+                                                            tutor._id ||
+                                                                tutor.id,
+                                                        )
+                                                            ? "btn-success"
+                                                            : ""
+                                                    }`}
+                                                >
+                                                    {bookmarkedTutorIds.includes(
+                                                        tutor._id || tutor.id,
+                                                    ) ? (
+                                                        <>
+                                                            <BookmarkMinus className="w-4 h-4 mr-2" />
+                                                            Saved
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Bookmark className="w-4 h-4 mr-2" />
+                                                            Save
+                                                        </>
+                                                    )}
+                                                </button>
+                                                <Link
+                                                    to={`/tutors/${tutor._id || tutor.id || ""}`}
+                                                    className="btn btn-primary rounded-full"
+                                                >
+                                                    View Details
+                                                </Link>
+                                            </div>
                                         </>
                                     ) : userRole === "tutor" ? (
                                         <>

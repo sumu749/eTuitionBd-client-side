@@ -1,9 +1,20 @@
+/* eslint-disable indent */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
-import { MapPin, BookOpen, Wallet } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import {
+    MapPin,
+    BookOpen,
+    Wallet,
+    Bookmark,
+    BookmarkMinus,
+} from "lucide-react";
+import toast from "react-hot-toast";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import api from "../../api/api";
+import useAuth from "../../hooks/useAuth";
+import useStudent from "../../hooks/useStudent";
+import { getSavedIds, toggleBookmark } from "../../utils/bookmarkUtils";
 
 const Tuitions = () => {
     const [search, setSearch] = useState("");
@@ -14,6 +25,10 @@ const Tuitions = () => {
     const [selectedSubject, setSelectedSubject] = useState("");
 
     const [selectedLocation, setSelectedLocation] = useState("");
+    const [, setBookmarkReload] = useState(0);
+    const { user } = useAuth();
+    const [isStudent] = useStudent();
+    const navigate = useNavigate();
 
     const { data, isLoading } = useQuery({
         queryKey: [
@@ -36,6 +51,22 @@ const Tuitions = () => {
     });
     const tuitions = data?.tuitions || [];
     const totalPages = data?.totalPages || 1;
+
+    const bookmarkedTuitionIds = user?.email
+        ? getSavedIds("tuition", user.email)
+        : [];
+
+    const handleBookmark = (tuition) => {
+        if (!user?.email) {
+            toast("Login to save bookmarks", { duration: 3000 });
+            navigate("/login");
+            return;
+        }
+
+        const isSaved = toggleBookmark("tuition", tuition, user.email);
+        setBookmarkReload((prev) => prev + 1);
+        toast.success(isSaved ? "Tuition saved" : "Tuition removed");
+    };
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -193,17 +224,47 @@ const Tuitions = () => {
                                 </div>
                             </div>
 
-                            <Link
-                                to={`/tuitions/${tuition._id}`}
-                                className="
+                            <div className="flex flex-col gap-3">
+                                {isStudent && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleBookmark(tuition)}
+                                        className={`btn btn-outline rounded-2xl w-full ${
+                                            bookmarkedTuitionIds.includes(
+                                                tuition._id,
+                                            )
+                                                ? "btn-success"
+                                                : ""
+                                        }`}
+                                    >
+                                        {bookmarkedTuitionIds.includes(
+                                            tuition._id,
+                                        ) ? (
+                                            <>
+                                                <BookmarkMinus className="w-4 h-4 mr-2" />
+                                                Saved
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Bookmark className="w-4 h-4 mr-2" />
+                                                Save
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+
+                                <Link
+                                    to={`/tuitions/${tuition._id}`}
+                                    className="
                                 btn
                                 btn-primary
                                 w-full
                                 rounded-2xl
                                 "
-                            >
-                                View Details
-                            </Link>
+                                >
+                                    View Details
+                                </Link>
+                            </div>
                         </div>
                     ))}
                 </div>

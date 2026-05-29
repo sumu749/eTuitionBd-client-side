@@ -1,19 +1,26 @@
-import { Link, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate, useParams } from "react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Bookmark, BookmarkMinus } from "lucide-react";
 import axiosSecure from "../../api/axiosSecure";
+import toast from "react-hot-toast";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
 import useTutor from "../../hooks/useTutor";
 import ApplyModal from "../../components/Tutor/ApplyModal";
 import useAuth from "../../hooks/useAuth";
+import useStudent from "../../hooks/useStudent";
+import { isBookmarked, toggleBookmark } from "../../utils/bookmarkUtils";
 
 const TuitionDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
+    const [, setBookmarkReload] = useState(0);
     const [isTutor] = useTutor();
+    const [isStudent] = useStudent();
 
     const { data: tuition, isLoading } = useQuery({
         queryKey: ["tuition-details", id],
@@ -22,6 +29,11 @@ const TuitionDetails = () => {
             return res.data;
         },
     });
+
+    const isSaved =
+        user?.email && tuition
+            ? isBookmarked("tuition", tuition._id, user.email)
+            : false;
 
     const { data: alreadyApplied } = useQuery({
         queryKey: ["already-applied", id, user?.email],
@@ -97,7 +109,53 @@ const TuitionDetails = () => {
                                 ৳ {tuition.budget}
                             </p>
 
-                            <div className="mt-6">
+                            <div className="mt-6 space-y-3">
+                                {isStudent && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (!user?.email) {
+                                                toast(
+                                                    "Login to save bookmarks",
+                                                    {
+                                                        duration: 3000,
+                                                    },
+                                                );
+                                                navigate("/login");
+                                                return;
+                                            }
+
+                                            const saved = toggleBookmark(
+                                                "tuition",
+                                                tuition,
+                                                user.email,
+                                            );
+                                            setBookmarkReload(
+                                                (prev) => prev + 1,
+                                            );
+                                            toast.success(
+                                                saved
+                                                    ? "Tuition saved"
+                                                    : "Tuition removed",
+                                            );
+                                        }}
+                                        className={`btn btn-outline w-full ${
+                                            isSaved ? "btn-success" : ""
+                                        }`}
+                                    >
+                                        {isSaved ? (
+                                            <>
+                                                <BookmarkMinus className="w-4 h-4 mr-2" />
+                                                Saved Tuition
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Bookmark className="w-4 h-4 mr-2" />
+                                                Save Tuition
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                                 {isTutor && (
                                     <button
                                         disabled={isApplicationSubmitted}

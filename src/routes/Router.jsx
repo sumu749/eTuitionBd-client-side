@@ -19,6 +19,7 @@ import MyTuitions from "../pages/StudentDashboard/MyTuitions";
 import AppliedTutors from "../pages/StudentDashboard/AppliedTutors";
 import Payments from "../pages/StudentDashboard/Payments";
 import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
+import SavedItems from "../pages/StudentDashboard/SavedItems";
 import Tuitions from "../pages/Tuitions/Tuitions";
 import TuitionDetails from "../pages/Tuitions/TuitionDetails";
 import FindTutors from "../pages/Tutors/FindTutors";
@@ -119,6 +120,14 @@ export const router = createBrowserRouter([
                 element: (
                     <StudentRoute>
                         <MyTuitions />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "student/saved",
+                element: (
+                    <StudentRoute>
+                        <SavedItems />
                     </StudentRoute>
                 ),
             },

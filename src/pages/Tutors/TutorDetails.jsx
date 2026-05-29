@@ -1,4 +1,5 @@
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
     Mail,
@@ -7,14 +8,23 @@ import {
     Briefcase,
     Star,
     BookOpen,
+    Bookmark,
+    BookmarkMinus,
 } from "lucide-react";
-
+import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
+import useStudent from "../../hooks/useStudent";
 import api from "../../api/api";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import TutorReviews from "../Reviews/TutorReviews";
+import { isBookmarked, toggleBookmark } from "../../utils/bookmarkUtils";
 
 const TutorDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { user } = useAuth();
+    const [isStudent] = useStudent();
+    const [, setBookmarkReload] = useState(0);
 
     const {
         data: tutor,
@@ -31,6 +41,11 @@ const TutorDetails = () => {
     if (isLoading) {
         return <LoadingSpinner />;
     }
+
+    const isSaved =
+        user?.email && tutor
+            ? isBookmarked("tutor", tutor._id || tutor.id, user.email)
+            : false;
 
     if (error) {
         return (
@@ -117,10 +132,56 @@ const TutorDetails = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-6">
+                            <div className="mt-6 flex flex-wrap gap-3">
                                 <button className="btn btn-primary rounded-full">
                                     Hire This Tutor
                                 </button>
+                                {isStudent && (
+                                    <button
+                                        type="button"
+                                        className={`btn btn-outline rounded-full ${
+                                            isSaved ? "btn-success" : ""
+                                        }`}
+                                        onClick={() => {
+                                            if (!user?.email) {
+                                                toast(
+                                                    "Login to save bookmarks",
+                                                    {
+                                                        duration: 3000,
+                                                    },
+                                                );
+                                                navigate("/login");
+                                                return;
+                                            }
+
+                                            const saved = toggleBookmark(
+                                                "tutor",
+                                                tutor,
+                                                user.email,
+                                            );
+                                            setBookmarkReload(
+                                                (prev) => prev + 1,
+                                            );
+                                            toast.success(
+                                                saved
+                                                    ? "Tutor saved"
+                                                    : "Tutor removed",
+                                            );
+                                        }}
+                                    >
+                                        {isSaved ? (
+                                            <>
+                                                <BookmarkMinus className="w-4 h-4 mr-2" />
+                                                Saved
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Bookmark className="w-4 h-4 mr-2" />
+                                                Save
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

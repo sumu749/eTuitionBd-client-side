@@ -49,6 +49,17 @@ const Sidebar = () => {
                     </Link>
 
                     <Link
+                        to="/dashboard/student/saved"
+                        className={`block px-4 py-2 rounded ${
+                            isActive("/dashboard/student/saved")
+                                ? "bg-cyan-600"
+                                : "hover:bg-slate-800"
+                        }`}
+                    >
+                        Saved Items
+                    </Link>
+
+                    <Link
                         to="/dashboard/student/applied-tutors"
                         className={`block px-4 py-2 rounded ${
                             isActive("/dashboard/student/applied-tutors")
