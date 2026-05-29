@@ -1,14 +1,25 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { MapPin, BookOpen, Wallet } from "lucide-react";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import api from "../../api/api";
 
 const Tuitions = () => {
+    const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState("");
+
     const { data: tuitions = [], isLoading } = useQuery({
-        queryKey: ["approved-tuitions"],
+        queryKey: ["approved-tuitions", search, sortBy],
+
         queryFn: async () => {
-            const res = await axiosSecure.get("/approved-tuitions");
+            const res = await api.get(
+                `/approved-tuitions?searchParams=${encodeURIComponent(
+                    search,
+                )}&sort=${encodeURIComponent(sortBy)}`,
+            );
+
             return res.data;
         },
     });
@@ -19,6 +30,29 @@ const Tuitions = () => {
 
     return (
         <section className="max-w-7xl mx-auto px-4 py-12">
+            <div className="flex flex-col md:flex-row gap-4 mb-8">
+                {/* Search */}
+                <input
+                    type="text"
+                    placeholder="Search by subject or location"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="input input-bordered w-full bg-slate-500 "
+                />
+
+                {/* Sort */}
+                <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="select select-bordered bg-slate-500 w-full md:w-48"
+                >
+                    <option value="">Sort By</option>
+                    <option value="budget-low">Budget Low → High</option>
+                    <option value="budget-high">Budget High → Low</option>
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
             <div className="text-center mb-12">
                 <h1 className="text-5xl font-black">
                     Available
