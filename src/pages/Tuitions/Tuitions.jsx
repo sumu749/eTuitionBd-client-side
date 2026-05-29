@@ -2,27 +2,30 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { MapPin, BookOpen, Wallet } from "lucide-react";
-
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import api from "../../api/api";
 
 const Tuitions = () => {
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("");
+    const [page, setPage] = useState(1);
 
-    const { data: tuitions = [], isLoading } = useQuery({
-        queryKey: ["approved-tuitions", search, sortBy],
+    const { data, isLoading } = useQuery({
+        queryKey: ["approved-tuitions", search, sortBy, page],
 
         queryFn: async () => {
             const res = await api.get(
                 `/approved-tuitions?searchParams=${encodeURIComponent(
                     search,
-                )}&sort=${encodeURIComponent(sortBy)}`,
+                )}&sort=${encodeURIComponent(sortBy)}&page=${page}&limit=6`,
             );
 
             return res.data;
         },
     });
+
+    const tuitions = data?.tuitions || [];
+    const totalPages = data?.totalPages || 1;
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -144,6 +147,35 @@ const Tuitions = () => {
                     ))}
                 </div>
             )}
+            <div className="flex justify-center mt-10 gap-2 flex-wrap">
+                <button
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                    className="btn btn-sm"
+                >
+                    Prev
+                </button>
+
+                {[...Array(totalPages).keys()].map((num) => (
+                    <button
+                        key={num}
+                        onClick={() => setPage(num + 1)}
+                        className={`btn btn-sm ${
+                            page === num + 1 ? "btn-primary" : "btn-outline"
+                        }`}
+                    >
+                        {num + 1}
+                    </button>
+                ))}
+
+                <button
+                    disabled={page === totalPages}
+                    onClick={() => setPage(page + 1)}
+                    className="btn btn-sm"
+                >
+                    Next
+                </button>
+            </div>
         </section>
     );
 };
