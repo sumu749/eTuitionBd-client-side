@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "https://e-tuition-bd-server-side-ud5u.vercel.app",
 });
 
 export default api;

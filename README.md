@@ -1,16 +1,83 @@
-# React + Vite
+# eTuitionBd Client Side
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Name
 
-Currently, two official plugins are available:
+- eTuitionBd
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Purpose
 
-## React Compiler
+eTuitionBd is a React + Vite based tutor and tuition marketplace web application. It enables students to discover tutors, save favorite tutors and tuition posts, post tuition requests, and manage dashboard workflows across student, tutor, and admin roles.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- Responsive student dashboard with saved items, posted tuitions, payments, and profile settings
+- Tutor discovery, tutor detail pages, and saved tutor bookmarks
+- Tuition listing and tuition detail pages with student-only bookmark support
+- Role-based routing and access control for student, tutor, and admin users
+- Email/password authentication plus Google login with Firebase
+- JWT authentication via API integration
+- Stripe integration for checkout and payment success flows
+- Data-driven UI with React Query
+- TailwindCSS + DaisyUI for styling
+- Recharts charts for analytics and dashboard visuals
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Live URL
+
+- Live URL: `https://etuitionbd-by-sumu.web.app`
+
+## Packages Used
+
+### Runtime dependencies
+
+- `react`
+- `react-dom`
+- `react-router`
+- `@tanstack/react-query`
+- `axios`
+- `firebase`
+- `react-hook-form`
+- `react-hot-toast`
+- `react-icons`
+- `lucide-react`
+- `framer-motion`
+- `recharts`
+- `sweetalert2`
+- `daisyui`
+- `tailwindcss`
+- `@stripe/react-stripe-js`
+- `@stripe/stripe-js`
+- `@tailwindcss/vite`
+
+### Development dependencies
+
+- `vite`
+- `@vitejs/plugin-react`
+- `eslint`
+- `@eslint/js`
+- `eslint-plugin-react-hooks`
+- `eslint-plugin-react-refresh`
+- `@types/react`
+- `@types/react-dom`
+- `globals`
+
+## Getting Started
+
+1. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+2. Start development server:
+
+    ```bash
+    npm run dev
+    ```
+
+3. Build for production:
+
+    ```bash
+    npm run build
+    ```
+
+---
