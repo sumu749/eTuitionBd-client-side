@@ -4,6 +4,7 @@ import Home from "../pages/Home/Home";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
 import Unauthorized from "../pages/Unauthorized/Unauthorized";
+import NotFound from "../pages/ErrorPage/NotFound";
 import StudentDashboard from "../pages/StudentDashboard/StudentDashboard";
 import TutorDashboard from "../pages/TutorDashboard/TutorDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
             {
                 path: "tuitions/:id",
                 element: <TuitionDetails />,
+            },
+            {
+                path: "*",
+                element: <NotFound />,
             },
         ],
     },
@@ -224,6 +229,10 @@ export const router = createBrowserRouter([
                         <AdminAnalytics />
                     </AdminRoute>
                 ),
+            },
+            {
+                path: "*",
+                element: <NotFound />,
             },
         ],
     },

@@ -1,9 +1,11 @@
 import { NavLink, useNavigate } from "react-router";
 import { GraduationCap, Menu, UserCircle } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
+import useStudent from "../../hooks/useStudent";
 
 const NavBar = () => {
     const { user, logoutUser } = useAuth();
+    const [isStudent, roleLoading] = useStudent();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -89,12 +91,14 @@ const NavBar = () => {
 
                 {/* Right */}
                 <div className="navbar-end gap-2">
-                    <NavLink
-                        to="/dashboard/post-tuition"
-                        className="btn btn-primary rounded-full hidden md:flex"
-                    >
-                        Post Tuition
-                    </NavLink>
+                    {isStudent && !roleLoading && (
+                        <NavLink
+                            to="/dashboard/student/post-tuition"
+                            className="btn btn-primary rounded-full hidden md:flex"
+                        >
+                            Post Tuition
+                        </NavLink>
+                    )}
 
                     {!user ? (
                         <>
