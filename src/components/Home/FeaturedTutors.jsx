@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import api from "../../api/api";
+import axiosSecure from "../../api/axiosSecure";
 
 const FeaturedTutors = () => {
     const [tutors, setTutors] = useState([]);
@@ -14,7 +14,7 @@ const FeaturedTutors = () => {
 
         const fetchTutors = async () => {
             try {
-                const res = await api.get("/users?role=tutor&limit=50");
+                const res = await axiosSecure.get("/users?role=tutor&limit=50");
                 if (mounted) {
                     const users = res.data || [];
                     const sorted = users

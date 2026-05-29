@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../api/api";
+import axiosSecure from "../../api/axiosSecure";
 import { Star } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router";
@@ -18,9 +18,9 @@ const FindTutors = () => {
         const load = async () => {
             try {
                 const [tRes, roleRes] = await Promise.all([
-                    api.get("/users?role=tutor"),
+                    axiosSecure.get("/users?role=tutor"),
                     user?.email
-                        ? api.get(`/users/role/${user.email}`)
+                        ? axiosSecure.get(`/users/role/${user.email}`)
                         : Promise.resolve({ data: {} }),
                 ]);
 
