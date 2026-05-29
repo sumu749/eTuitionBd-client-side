@@ -9,21 +9,31 @@ const Tuitions = () => {
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("");
     const [page, setPage] = useState(1);
+    const [selectedClass, setSelectedClass] = useState("");
+
+    const [selectedSubject, setSelectedSubject] = useState("");
+
+    const [selectedLocation, setSelectedLocation] = useState("");
 
     const { data, isLoading } = useQuery({
-        queryKey: ["approved-tuitions", search, sortBy, page],
+        queryKey: [
+            "approved-tuitions",
+            search,
+            sortBy,
+            page,
+            selectedClass,
+            selectedSubject,
+            selectedLocation,
+        ],
 
         queryFn: async () => {
             const res = await api.get(
-                `/approved-tuitions?searchParams=${encodeURIComponent(
-                    search,
-                )}&sort=${encodeURIComponent(sortBy)}&page=${page}&limit=6`,
+                `/approved-tuitions?searchParams=${search}&sort=${sortBy}&page=${page}&limit=6&classLevel=${selectedClass}&subject=${selectedSubject}&location=${selectedLocation}`,
             );
 
             return res.data;
         },
     });
-
     const tuitions = data?.tuitions || [];
     const totalPages = data?.totalPages || 1;
 
@@ -42,6 +52,57 @@ const Tuitions = () => {
                     onChange={(e) => setSearch(e.target.value)}
                     className="input input-bordered w-full bg-slate-500 "
                 />
+
+                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                    {/* Class Filter */}
+                    <select
+                        value={selectedClass}
+                        onChange={(e) => {
+                            setSelectedClass(e.target.value);
+                            setPage(1);
+                        }}
+                        className="select select-bordered w-full bg-slate-500"
+                    >
+                        <option value="">All Classes</option>
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="SSC">SSC</option>
+                        <option value="HSC">HSC</option>
+                    </select>
+
+                    {/* Subject Filter */}
+                    <select
+                        value={selectedSubject}
+                        onChange={(e) => {
+                            setSelectedSubject(e.target.value);
+                            setPage(1);
+                        }}
+                        className="select select-bordered w-full bg-slate-500"
+                    >
+                        <option value="">All Subjects</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="English">English</option>
+                    </select>
+
+                    {/* Location Filter */}
+                    <select
+                        value={selectedLocation}
+                        onChange={(e) => {
+                            setSelectedLocation(e.target.value);
+                            setPage(1);
+                        }}
+                        className="select select-bordered w-full bg-slate-500"
+                    >
+                        <option value="">All Locations</option>
+                        <option value="Dhaka">Dhaka</option>
+                        <option value="Rangpur">Rangpur</option>
+                        <option value="Rajshahi">Rajshahi</option>
+                        <option value="Chittagong">Chittagong</option>
+                    </select>
+                </div>
 
                 {/* Sort */}
                 <select
