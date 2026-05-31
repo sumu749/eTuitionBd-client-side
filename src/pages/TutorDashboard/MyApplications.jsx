@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { Briefcase, CalendarDays, Users, Pencil } from "lucide-react";
 import { useState } from "react";
-import axiosSecure from "../../api/axiosSecure";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
+import api from "../../api/api";
 
 const MyApplications = () => {
     const { user } = useAuth();
@@ -26,7 +26,7 @@ const MyApplications = () => {
         queryFn: async () => {
             const email = encodeURIComponent(user.email);
 
-            const res = await axiosSecure.get(`/tutor-applications/${email}`);
+            const res = await api.get(`/tutor-applications/${email}`);
 
             return res.data;
         },
@@ -59,7 +59,7 @@ const MyApplications = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axiosSecure.delete(`/applications/${id}`);
+            await api.delete(`/applications/${id}`);
 
             toast.success("Application Deleted");
 
@@ -80,7 +80,7 @@ const MyApplications = () => {
         };
 
         try {
-            await axiosSecure.patch(
+            await api.patch(
                 `/applications/${selectedApplication._id}`,
                 updatedApplication,
             );

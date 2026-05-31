@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
-import axiosSecure from "../../api/axiosSecure";
 import toast from "react-hot-toast";
+import api from "../../api/api";
 
 const PostTuition = () => {
     const { user } = useAuth();
@@ -30,7 +30,7 @@ const PostTuition = () => {
                 createdAt: new Date(),
             };
 
-            await axiosSecure.post("/tuitions", tuition);
+            await api.post("/tuitions", tuition);
 
             toast.success("Tuition Posted Successfully");
 

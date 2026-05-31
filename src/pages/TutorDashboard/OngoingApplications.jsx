@@ -8,9 +8,9 @@ import {
     GraduationCap,
 } from "lucide-react";
 
-import axiosSecure from "../../api/axiosSecure";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import api from "../../api/api";
 
 const OngoingApplications = () => {
     const { user } = useAuth();
@@ -19,9 +19,7 @@ const OngoingApplications = () => {
         queryKey: ["ongoing-tuitions", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(
-                `/ongoing-tuitions/${user.email}`,
-            );
+            const res = await api.get(`/ongoing-tuitions/${user.email}`);
 
             return res.data;
         },

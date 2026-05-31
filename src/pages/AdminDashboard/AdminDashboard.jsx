@@ -2,14 +2,14 @@
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, ChartBar, ShieldCheck, Users, Wallet } from "lucide-react";
-import axiosSecure from "../../api/axiosSecure";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import api from "../../api/api";
 
 const AdminDashboard = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["admin-stats"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/admin-stats");
+            const res = await api.get("/admin-stats");
             return res.data;
         },
     });

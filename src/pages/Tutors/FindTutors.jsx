@@ -1,6 +1,5 @@
 /* eslint-disable indent */
 import { useEffect, useState } from "react";
-import axiosSecure from "../../api/axiosSecure";
 import api from "../../api/api";
 import { Star, Bookmark, BookmarkMinus } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,7 +24,7 @@ const FindTutors = () => {
                 const [tRes, roleRes] = await Promise.all([
                     api.get("/public-tutors"),
                     user?.email
-                        ? axiosSecure.get(`/users/role/${user.email}`)
+                        ? api.get(`/users/role/${user.email}`)
                         : Promise.resolve({ data: {} }),
                 ]);
 

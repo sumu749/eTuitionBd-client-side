@@ -1,7 +1,19 @@
+// api.js
+
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://e-tuition-bd-server-side-ud5u.vercel.app",
+    baseURL: import.meta.env.VITE_API_URL,
+});
+
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access-token");
+
+    if (token) {
+        config.headers.authorization = `Bearer ${token}`;
+    }
+
+    return config;
 });
 
 export default api;

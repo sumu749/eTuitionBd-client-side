@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import RevenueChart from "../../components/Charts/RevenueChart";
 import { Wallet, Banknote } from "lucide-react";
+import api from "../../api/api";
 
 const Revenue = () => {
     const { user } = useAuth();
@@ -12,7 +12,7 @@ const Revenue = () => {
         queryKey: ["revenue", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/revenue/${user.email}`);
+            const res = await api.get(`/revenue/${user.email}`);
 
             return res.data;
         },

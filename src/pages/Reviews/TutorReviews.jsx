@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
+import api from "../../api/api";
 
 const TutorReviews = ({ tutorEmail }) => {
     const { user } = useAuth();
@@ -15,7 +16,7 @@ const TutorReviews = ({ tutorEmail }) => {
         queryKey: ["reviews", tutorEmail],
 
         queryFn: async () => {
-            const res = await axiosSecure.get(`/reviews/${tutorEmail}`);
+            const res = await api.get(`/reviews/${tutorEmail}`);
 
             return res.data;
         },
@@ -41,7 +42,7 @@ const TutorReviews = ({ tutorEmail }) => {
                 createdAt: new Date(),
             };
 
-            await axiosSecure.post("/reviews", reviewData);
+            await api.post("/reviews", reviewData);
 
             toast.success("Review Added");
 

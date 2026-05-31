@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+import api from "../../api/api";
 
 const TransactionHistory = () => {
     const { data = [] } = useQuery({
         queryKey: ["transactions"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/transactions");
+            const res = await api.get("/transactions");
 
             return res.data;
         },

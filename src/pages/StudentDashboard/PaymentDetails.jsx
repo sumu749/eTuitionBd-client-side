@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import api from "../../api/api";
 
 const PaymentDetails = () => {
     const { id } = useParams();
@@ -9,7 +9,7 @@ const PaymentDetails = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["payment-details", id],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/transactions/${id}`);
+            const res = await api.get(`/transactions/${id}`);
             return res.data;
         },
     });

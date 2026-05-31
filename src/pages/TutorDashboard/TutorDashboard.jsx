@@ -9,10 +9,9 @@ import {
     Users,
     CheckCircle2,
 } from "lucide-react";
-
-import axiosSecure from "../../api/axiosSecure";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import api from "../../api/api";
 
 const TutorDashboard = () => {
     const { user } = useAuth();
@@ -23,9 +22,7 @@ const TutorDashboard = () => {
             queryKey: ["tutor-applications-dashboard", user?.email],
             enabled: !!user?.email,
             queryFn: async () => {
-                const res = await axiosSecure.get(
-                    `/tutor-applications/${user.email}`,
-                );
+                const res = await api.get(`/tutor-applications/${user.email}`);
 
                 return res.data;
             },
@@ -36,9 +33,7 @@ const TutorDashboard = () => {
         queryKey: ["ongoing-tuitions", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(
-                `/ongoing-tuitions/${user.email}`,
-            );
+            const res = await api.get(`/ongoing-tuitions/${user.email}`);
 
             return res.data;
         },

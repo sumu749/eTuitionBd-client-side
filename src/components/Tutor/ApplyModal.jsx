@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
-import axiosSecure from "../../api/axiosSecure";
+import api from "../../api/api";
 import toast from "react-hot-toast";
 
 const ApplyModal = ({ tuition, openModal, setOpenModal, onApplied }) => {
@@ -37,7 +37,7 @@ const ApplyModal = ({ tuition, openModal, setOpenModal, onApplied }) => {
                 appliedAt: new Date(),
             };
 
-            const res = await axiosSecure.post("/applications", application);
+            const res = await api.post("/applications", application);
 
             // log and expose server response for debugging
 

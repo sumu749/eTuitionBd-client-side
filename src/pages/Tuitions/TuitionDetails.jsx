@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bookmark, BookmarkMinus } from "lucide-react";
-import axiosSecure from "../../api/axiosSecure";
+
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
@@ -11,6 +11,7 @@ import ApplyModal from "../../components/Tutor/ApplyModal";
 import useAuth from "../../hooks/useAuth";
 import useStudent from "../../hooks/useStudent";
 import { isBookmarked, toggleBookmark } from "../../utils/bookmarkUtils";
+import api from "../../api/api";
 
 const TuitionDetails = () => {
     const { id } = useParams();
@@ -25,7 +26,7 @@ const TuitionDetails = () => {
     const { data: tuition, isLoading } = useQuery({
         queryKey: ["tuition-details", id],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/tuitions/${id}`);
+            const res = await api.get(`/tuitions/${id}`);
             return res.data;
         },
     });
@@ -39,7 +40,7 @@ const TuitionDetails = () => {
         queryKey: ["already-applied", id, user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/applications/${user.email}`);
+            const res = await api.get(`/applications/${user.email}`);
             const applications = res.data || [];
             return applications.find(
                 (application) => application.tuitionId === id,

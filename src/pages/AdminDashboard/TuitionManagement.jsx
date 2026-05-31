@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
 import { BookOpen } from "lucide-react";
+import api from "../../api/api";
 
 const TuitionManagement = () => {
     const {
@@ -13,14 +14,14 @@ const TuitionManagement = () => {
     } = useQuery({
         queryKey: ["admin-tuitions"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/tuitions");
+            const res = await api.get("/tuitions");
             return res.data;
         },
     });
 
     const handleStatusChange = async (id, status) => {
         try {
-            await axiosSecure.patch(`/tuitions/status/${id}`, {
+            await api.patch(`/tuitions/status/${id}`, {
                 status,
             });
 

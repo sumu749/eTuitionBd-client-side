@@ -1,10 +1,11 @@
 /* eslint-disable indent */
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import api from "../../api/api";
 
 const AppliedTutors = () => {
     const { user } = useAuth();
@@ -22,14 +23,14 @@ const AppliedTutors = () => {
         retry: false,
         refetchOnWindowFocus: false,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/applications/${user.email}`);
+            const res = await api.get(`/applications/${user.email}`);
             return res.data;
         },
     });
 
     const handleStatusUpdate = async (id, status) => {
         try {
-            await axiosSecure.patch(`/applications/${id}`, {
+            await api.patch(`/applications/${id}`, {
                 status,
             });
 

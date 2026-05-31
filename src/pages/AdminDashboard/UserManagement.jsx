@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
 import { Shield, Trash2, Users } from "lucide-react";
+import api from "../../api/api";
 
 const UserManagement = () => {
     const {
@@ -13,14 +14,14 @@ const UserManagement = () => {
     } = useQuery({
         queryKey: ["users"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/users");
+            const res = await api.get("/users");
             return res.data;
         },
     });
 
     const handleRoleChange = async (id, role) => {
         try {
-            await axiosSecure.patch(`/users/role/${id}`, {
+            await api.patch(`/users/role/${id}`, {
                 role,
             });
 
@@ -42,7 +43,7 @@ const UserManagement = () => {
         }
 
         try {
-            await axiosSecure.delete(`/users/${id}`);
+            await api.delete(`/users/${id}`);
 
             toast.success("User deleted successfully");
             refetch();

@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import UserRoleChart from "../../components/Charts/UserRoleChart";
 import RevenueChart from "../../components/Charts/RevenueChart";
 import TransactionHistory from "./TransactionHistory";
 import TuitionChart from "../../components/Charts/TuitionChart";
+import api from "../../api/api";
 
 const AdminAnalytics = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["admin-stats"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/admin-stats");
+            const res = await api.get("/admin-stats");
             return res.data;
         },
     });
@@ -18,7 +19,7 @@ const AdminAnalytics = () => {
     const { data: tuitions = [] } = useQuery({
         queryKey: ["all-tuitions"],
         queryFn: async () => {
-            const res = await axiosSecure.get("/tuitions");
+            const res = await api.get("/tuitions");
             return res.data;
         },
     });

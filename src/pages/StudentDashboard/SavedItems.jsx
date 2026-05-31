@@ -9,6 +9,7 @@ const SavedItems = () => {
 
     useEffect(() => {
         if (!user?.email) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setBookmarks({ tutors: [], tuitions: [] });
             return;
         }

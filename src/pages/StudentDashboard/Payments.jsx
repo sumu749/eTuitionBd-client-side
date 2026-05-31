@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 import { useQuery } from "@tanstack/react-query";
 import { CreditCard, Receipt, Wallet } from "lucide-react";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import useAuth from "../../hooks/useAuth";
+import api from "../../api/api";
 
 const Payments = () => {
     const { user, loading: authLoading } = useAuth();
@@ -16,7 +17,7 @@ const Payments = () => {
         queryKey: ["student-payments", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get("/payments", {
+            const res = await api.get("/payments", {
                 params: {
                     email: user.email,
                 },

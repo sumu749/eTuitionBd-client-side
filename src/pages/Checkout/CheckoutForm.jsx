@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router";
-import axiosSecure from "../../api/axiosSecure";
+
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
+import api from "../../api/api";
 
 const CheckoutForm = ({ application }) => {
     const stripe = useStripe();
@@ -22,7 +23,7 @@ const CheckoutForm = ({ application }) => {
 
         const createPaymentIntent = async () => {
             try {
-                const res = await axiosSecure.post("/create-payment-intent", {
+                const res = await api.post("/create-payment-intent", {
                     amount,
                 });
 
@@ -97,7 +98,7 @@ const CheckoutForm = ({ application }) => {
                     paymentDate: new Date(),
                 };
 
-                await axiosSecure.post("/transactions", transactionData);
+                await api.post("/transactions", transactionData);
 
                 toast.success("Payment Successful");
 

@@ -2,9 +2,10 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import axiosSecure from "../../api/axiosSecure";
+
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import CheckoutForm from "./CheckoutForm";
+import api from "../../api/api";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -14,7 +15,7 @@ const Checkout = () => {
     const { data: application, isLoading } = useQuery({
         queryKey: ["application", id],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/application/${id}`);
+            const res = await api.get(`/application/${id}`);
             return res.data;
         },
     });

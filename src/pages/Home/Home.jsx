@@ -1,5 +1,4 @@
 import Hero from "../../components/Home/Hero";
-
 import LatestTuitions from "../../components/Home/LatestTuitions";
 import FeaturedTutors from "../../components/Home/FeaturedTutors";
 import TrustedUniversities from "../../components/Home/TrustedUniversities";
