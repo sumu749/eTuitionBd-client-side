@@ -35,8 +35,13 @@ const TutorDetails = () => {
     } = useQuery({
         queryKey: ["tutor-details", id],
         queryFn: async () => {
-            const res = await api.get(`/users/tutor/${id}`);
-            return res.data;
+            const res = await api.get("/public-tutors");
+            const tutors = res.data || [];
+            const foundTutor = tutors.find((t) => (t._id || t.id) === id);
+            if (!foundTutor) {
+                throw new Error("Tutor not found");
+            }
+            return foundTutor;
         },
     });
 
@@ -192,7 +197,9 @@ const TutorDetails = () => {
                                             }
 
                                             // Optimistic update
-                                            setIsSavedOptimistic((prev) => !prev);
+                                            setIsSavedOptimistic(
+                                                (prev) => !prev,
+                                            );
 
                                             try {
                                                 const saved =
@@ -201,13 +208,15 @@ const TutorDetails = () => {
                                                         tutor,
                                                         user.email,
                                                     );
-                                                await queryClient.refetchQueries({
-                                                    queryKey: [
-                                                        "saved-bookmarks",
-                                                        user.email,
-                                                    ],
-                                                    type: "all",
-                                                });
+                                                await queryClient.refetchQueries(
+                                                    {
+                                                        queryKey: [
+                                                            "saved-bookmarks",
+                                                            user.email,
+                                                        ],
+                                                        type: "all",
+                                                    },
+                                                );
                                                 // Clear optimistic state after server confirmation
                                                 setIsSavedOptimistic(false);
                                                 toast.success(

@@ -74,7 +74,8 @@ const FeaturedTutors = () => {
         }
     }, [user?.email]);
 
-    const savedTutorIds = bookmarkedTutors?.map((bookmark) => bookmark.id) || [];
+    const savedTutorIds =
+        bookmarkedTutors?.map((bookmark) => bookmark.id) || [];
     const allBookmarkedIds = new Set([
         ...savedTutorIds,
         ...optimisticBookmarks,
@@ -166,13 +167,13 @@ const FeaturedTutors = () => {
                                     userRole={userRole}
                                     user={user}
                                     onViewDetails={(t) =>
-                                        navigate(`/tutor-details/${t._id}`)
+                                        navigate(`/tutors/${t._id || t.id}`)
                                     }
                                     onMyProfile={() =>
                                         navigate("/dashboard/tutor")
                                     }
                                     onViewProfile={(t) =>
-                                        navigate(`/tutor-details/${t._id}`)
+                                        navigate(`/tutors/${t._id || t.id}`)
                                     }
                                     onMessage={() => {
                                         toast("Message feature coming soon!", {
