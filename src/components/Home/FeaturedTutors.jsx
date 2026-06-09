@@ -1,6 +1,7 @@
-/* eslint-disable indent */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
 import TutorCard from "../Tutor/TutorCard";
 import {
@@ -13,49 +14,46 @@ import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 const FeaturedTutors = () => {
-    const [tutors, setTutors] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [bookmarkedTutors, setBookmarkedTutors] = useState([]);
     const [userRole, setUserRole] = useState(null);
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const { data: tutors = [], isLoading } = useQuery({
+        queryKey: ["featured-tutors"],
+        staleTime: 10 * 60 * 1000,
+        queryFn: async () => {
+            const res = await api.get("/public-tutors?limit=50");
+            const users = res.data || [];
+            return users
+                .slice()
+                .sort(
+                    (a, b) =>
+                        new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+                )
+                .slice(0, 4);
+        },
+    });
+
     useEffect(() => {
+        if (!user) {
+            setUserRole(null);
+            return;
+        }
+
         let mounted = true;
 
-        const fetchTutors = async () => {
-            try {
-                const [tRes, roleRes] = await Promise.all([
-                    api.get("/public-tutors?limit=50"),
-                    user?.email
-                        ? api.get(
-                              `/users/role/${encodeURIComponent(user.email)}`,
-                          )
-                        : Promise.resolve({ data: {} }),
-                ]);
-                if (mounted) {
-                    const users = tRes.data || [];
-                    const sorted = users
-                        .slice()
-                        .sort(
-                            (a, b) =>
-                                new Date(b.createdAt || 0) -
-                                new Date(a.createdAt || 0),
-                        );
-                    setTutors(sorted.slice(0, 4));
-                    setUserRole(roleRes?.data?.role || null);
-                }
-            } catch {
-                if (mounted) {
-                    setTutors([]);
-                    setUserRole(null);
-                }
-            } finally {
-                if (mounted) setLoading(false);
+        const fetchRole = async () => {
+            const roleRes = await api.get(
+                `/users/role/${encodeURIComponent(user.email)}`,
+            );
+
+            if (mounted) {
+                setUserRole(roleRes?.data?.role || null);
             }
         };
 
-        fetchTutors();
+        fetchRole();
 
         return () => {
             mounted = false;
@@ -65,7 +63,7 @@ const FeaturedTutors = () => {
     useEffect(() => {
         if (user?.email) {
             const saved = getSavedBookmarks(user.email);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+
             setBookmarkedTutors(saved.tutors || []);
         }
     }, [user?.email]);
@@ -102,7 +100,7 @@ const FeaturedTutors = () => {
                     Top rated educators from leading universities
                 </p>
 
-                {loading ? (
+                {isLoading ? (
                     <div className="mt-10 text-center text-slate-400">
                         Loading featured tutors from the database...
                     </div>
