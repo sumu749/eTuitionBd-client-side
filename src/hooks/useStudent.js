@@ -17,7 +17,9 @@ const useStudent = () => {
 
             setLoading(true);
             try {
-                const res = await api.get(`/users/role/${user.email}`);
+                const res = await api.get(
+                    `/users/role/${encodeURIComponent(user.email)}`,
+                );
                 setIsStudent(res.data?.role === "student");
             } catch (err) {
                 console.error("useStudent error:", err);

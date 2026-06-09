@@ -1,5 +1,3 @@
-// api.js
-
 import axios from "axios";
 
 const api = axios.create({
@@ -7,6 +5,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+    if (config.url === "/jwt") {
+        return config;
+    }
+
     const token = localStorage.getItem("access-token");
 
     if (token) {

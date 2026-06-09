@@ -17,7 +17,9 @@ const useTutor = () => {
 
             setLoading(true);
             try {
-                const res = await api.get(`/users/role/${user.email}`);
+                const res = await api.get(
+                    `/users/role/${encodeURIComponent(user.email)}`,
+                );
                 setIsTutor(res.data?.role === "tutor");
             } catch (err) {
                 console.error("useTutor error:", err);

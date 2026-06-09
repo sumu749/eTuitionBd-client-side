@@ -31,49 +31,49 @@ const AdminAnalytics = () => {
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Total Users</div>
                 <div className="stat-value text-cyan-300">
-                    {data.totalUsers}
+                    {data?.totalUsers}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Students</div>
                 <div className="stat-value text-green-400">
-                    {data.totalStudents}
+                    {data?.totalStudents}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Tutors</div>
                 <div className="stat-value text-yellow-400">
-                    {data.totalTutors}
+                    {data?.totalTutors}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Admins</div>
                 <div className="stat-value text-purple-400">
-                    {data.totalAdmins}
+                    {data?.totalAdmins}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Tuitions</div>
                 <div className="stat-value text-pink-400">
-                    {data.totalTuitions}
+                    {data?.totalTuitions}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl">
                 <div className="stat-title text-slate-400">Applications</div>
                 <div className="stat-value text-orange-400">
-                    {data.totalApplications}
+                    {data?.totalApplications}
                 </div>
             </div>
 
             <div className="stat bg-slate-900 rounded-3xl md:col-span-3">
                 <div className="stat-title text-slate-400">Total Revenue</div>
                 <div className="stat-value text-emerald-400">
-                    ৳ {data.totalRevenue}
+                    ৳ {data?.totalRevenue}
                 </div>
             </div>
             <div className="grid lg:grid-cols-2 gap-6">

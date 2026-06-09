@@ -17,7 +17,9 @@ const useAdmin = () => {
 
             setLoading(true);
             try {
-                const res = await api.get(`/users/role/${user.email}`);
+                const res = await api.get(
+                    `/users/role/${encodeURIComponent(user.email)}`,
+                );
                 setIsAdmin(res.data?.role === "admin");
             } catch (err) {
                 console.error("useAdmin error:", err);

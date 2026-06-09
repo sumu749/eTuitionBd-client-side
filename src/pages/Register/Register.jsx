@@ -43,10 +43,17 @@ const Register = () => {
                 createdAt: new Date(),
             });
 
-            // Generate JWT
-            const jwtRes = await api.post("/jwt", {
-                email: data.email,
-            });
+            // Generate JWT using Firebase token
+            const firebaseToken = await result.user.getIdToken();
+            const jwtRes = await api.post(
+                "/jwt",
+                {},
+                {
+                    headers: {
+                        authorization: `Bearer ${firebaseToken}`,
+                    },
+                },
+            );
 
             // Store JWT
             localStorage.setItem("access-token", jwtRes.data.token);

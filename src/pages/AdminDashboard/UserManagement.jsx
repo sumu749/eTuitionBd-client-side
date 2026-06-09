@@ -140,20 +140,20 @@ const UserManagement = () => {
                                     <td>
                                         <span
                                             className={`badge ${
-                                                user.role === "admin"
+                                                user?.role === "admin"
                                                     ? "badge-error"
-                                                    : user.role === "tutor"
+                                                    : user?.role === "tutor"
                                                       ? "badge-secondary"
                                                       : "badge-primary"
                                             }`}
                                         >
-                                            {user.role}
+                                            {user?.role}
                                         </span>
                                     </td>
 
                                     <td>
                                         <select
-                                            defaultValue={user.role}
+                                            defaultValue={user?.role}
                                             onChange={(e) =>
                                                 handleRoleChange(
                                                     user._id,
@@ -203,7 +203,10 @@ const UserManagement = () => {
                     <h3 className="text-slate-400 text-sm">Students</h3>
 
                     <p className="text-3xl font-bold text-cyan-300 mt-2">
-                        {users.filter((user) => user.role === "student").length}
+                        {
+                            users.filter((user) => user?.role === "student")
+                                .length
+                        }
                     </p>
                 </div>
 
@@ -211,7 +214,7 @@ const UserManagement = () => {
                     <h3 className="text-slate-400 text-sm">Tutors</h3>
 
                     <p className="text-3xl font-bold text-fuchsia-300 mt-2">
-                        {users.filter((user) => user.role === "tutor").length}
+                        {users.filter((user) => user?.role === "tutor").length}
                     </p>
                 </div>
 
@@ -223,7 +226,7 @@ const UserManagement = () => {
                     </div>
 
                     <p className="text-3xl font-bold text-rose-400 mt-2">
-                        {users.filter((user) => user.role === "admin").length}
+                        {users.filter((user) => user?.role === "admin").length}
                     </p>
                 </div>
             </div>

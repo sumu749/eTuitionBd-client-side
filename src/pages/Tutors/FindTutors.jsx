@@ -24,7 +24,9 @@ const FindTutors = () => {
                 const [tRes, roleRes] = await Promise.all([
                     api.get("/public-tutors"),
                     user?.email
-                        ? api.get(`/users/role/${user.email}`)
+                        ? api.get(
+                              `/users/role/${encodeURIComponent(user.email)}`,
+                          )
                         : Promise.resolve({ data: {} }),
                 ]);
 

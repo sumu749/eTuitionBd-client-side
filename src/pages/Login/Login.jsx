@@ -12,14 +12,31 @@ const Login = () => {
     const { loginUser, googleLogin } = useAuth();
     const navigate = useNavigate();
 
-    const loginEmail = async (email) => {
-        const jwtRes = await api.post("/jwt", { email });
-        localStorage.setItem("access-token", jwtRes.data.token);
+    const loginEmail = async (user) => {
+        // Firebase token
+        const firebaseToken = await user.getIdToken();
+
+        // Send firebase token to backend
+        const jwtRes = await api.post(
+            "/jwt",
+            {},
+            {
+                headers: {
+                    authorization: `Bearer ${firebaseToken}`,
+                },
+            },
+        );
+
+        const token = jwtRes.data.token;
+        localStorage.setItem("access-token", token);
+        return token;
     };
 
     const redirectByRole = async (email) => {
         try {
-            const res = await api.get(`/users/role/${email}`);
+            const res = await api.get(
+                `/users/role/${encodeURIComponent(email)}`,
+            );
 
             const role = res.data.role;
 
@@ -40,6 +57,7 @@ const Login = () => {
 
     const handleEmailLogin = async (e) => {
         e.preventDefault();
+        localStorage.removeItem("access-token");
 
         if (!email || !password) {
             toast.error("Please fill in all fields");
@@ -49,8 +67,10 @@ const Login = () => {
         setLoading(true);
         try {
             const userCredential = await loginUser(email, password);
-            await loginEmail(userCredential.user.email);
-            toast.success("Login successful!");
+            const token = await loginEmail(userCredential.user);
+            if (!token) {
+                throw new Error("Token not found");
+            }
 
             await redirectByRole(userCredential.user.email);
         } catch (error) {
@@ -67,6 +87,7 @@ const Login = () => {
     };
 
     const handleGoogleLogin = async () => {
+        localStorage.removeItem("access-token");
         setLoading(true);
 
         try {
@@ -75,7 +96,9 @@ const Login = () => {
             const user = result.user;
 
             // Check user exists in DB
-            const existingUser = await api.get(`/users/${user.email}`);
+            const existingUser = await api.get(
+                `/users/${encodeURIComponent(user.email)}`,
+            );
 
             // If not exists, create
             if (!existingUser.data) {
@@ -90,7 +113,10 @@ const Login = () => {
             }
 
             // create jwt
-            await loginEmail(user.email);
+            const token = await loginEmail(user);
+            if (!token) {
+                throw new Error("Token not found");
+            }
 
             toast.success("Login successful!");
 
