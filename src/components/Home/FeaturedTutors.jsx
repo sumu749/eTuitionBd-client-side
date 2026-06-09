@@ -1,23 +1,28 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import TutorCard from "../Tutor/TutorCard";
-import {
-    getSavedBookmarks,
-    addBookmark,
-    removeBookmark,
-} from "../../utils/bookmarkUtils";
+import { getSavedBookmarks, toggleBookmark } from "../../utils/bookmarkUtils";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 const FeaturedTutors = () => {
-    const [bookmarkedTutors, setBookmarkedTutors] = useState([]);
     const [userRole, setUserRole] = useState(null);
     const { user } = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    const { data: savedBookmarks = { tutors: [], tuitions: [] } } = useQuery({
+        queryKey: ["saved-bookmarks", user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => getSavedBookmarks(user.email),
+        initialData: { tutors: [], tuitions: [] },
+    });
+
+    const bookmarkedTutors = savedBookmarks?.tutors || [];
 
     const { data: tutors = [], isLoading } = useQuery({
         queryKey: ["featured-tutors"],
@@ -61,14 +66,12 @@ const FeaturedTutors = () => {
     }, [user]);
 
     useEffect(() => {
-        if (user?.email) {
-            const saved = getSavedBookmarks(user.email);
-
-            setBookmarkedTutors(saved.tutors || []);
+        if (!user?.email) {
+            setUserRole(null);
         }
     }, [user?.email]);
 
-    const handleBookmark = (tutor) => {
+    const handleBookmark = async (tutor) => {
         if (!user?.email) {
             toast("Login to save bookmarks", { duration: 3000 });
             navigate("/login");
@@ -76,17 +79,20 @@ const FeaturedTutors = () => {
         }
 
         const isBookmarked = bookmarkedTutors.some((t) => t.id === tutor._id);
-        if (isBookmarked) {
-            removeBookmark("tutor", tutor._id, user.email);
-        } else {
-            addBookmark("tutor", tutor, user.email);
-        }
 
-        const saved = getSavedBookmarks(user.email);
-        setBookmarkedTutors(saved.tutors || []);
-        toast.success(
-            isBookmarked ? "Tutor removed from bookmarks" : "Tutor saved!",
-        );
+        try {
+            await toggleBookmark("tutor", tutor, user.email);
+            await queryClient.invalidateQueries([
+                "saved-bookmarks",
+                user.email,
+            ]);
+            toast.success(
+                isBookmarked ? "Tutor removed from bookmarks" : "Tutor saved!",
+            );
+        } catch (error) {
+            console.error(error);
+            toast.error("Unable to update bookmark. Please try again.");
+        }
     };
 
     return (

@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, BookmarkMinus } from "lucide-react";
 
 import toast from "react-hot-toast";
@@ -10,7 +10,7 @@ import useTutor from "../../hooks/useTutor";
 import ApplyModal from "../../components/Tutor/ApplyModal";
 import useAuth from "../../hooks/useAuth";
 import useStudent from "../../hooks/useStudent";
-import { isBookmarked, toggleBookmark } from "../../utils/bookmarkUtils";
+import { getSavedBookmarks, toggleBookmark } from "../../utils/bookmarkUtils";
 import api from "../../api/api";
 
 const TuitionDetails = () => {
@@ -19,9 +19,9 @@ const TuitionDetails = () => {
     const { user } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
-    const [, setBookmarkReload] = useState(0);
     const [isTutor] = useTutor();
     const [isStudent] = useStudent();
+    const queryClient = useQueryClient();
 
     const { data: tuition, isLoading } = useQuery({
         queryKey: ["tuition-details", id],
@@ -31,9 +31,21 @@ const TuitionDetails = () => {
         },
     });
 
+    const {
+        data: savedBookmarks = { tutors: [], tuitions: [] },
+        isLoading: bookmarksLoading,
+    } = useQuery({
+        queryKey: ["saved-bookmarks", user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => getSavedBookmarks(user.email),
+        initialData: { tutors: [], tuitions: [] },
+    });
+
     const isSaved =
         user?.email && tuition
-            ? isBookmarked("tuition", tuition._id, user.email)
+            ? savedBookmarks.tuitions.some(
+                  (bookmark) => bookmark.id === tuition._id,
+              )
             : false;
 
     const { data: alreadyApplied } = useQuery({
@@ -114,7 +126,7 @@ const TuitionDetails = () => {
                                 {isStudent && (
                                     <button
                                         type="button"
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (!user?.email) {
                                                 toast(
                                                     "Login to save bookmarks",
@@ -126,19 +138,30 @@ const TuitionDetails = () => {
                                                 return;
                                             }
 
-                                            const saved = toggleBookmark(
-                                                "tuition",
-                                                tuition,
-                                                user.email,
-                                            );
-                                            setBookmarkReload(
-                                                (prev) => prev + 1,
-                                            );
-                                            toast.success(
-                                                saved
-                                                    ? "Tuition saved"
-                                                    : "Tuition removed",
-                                            );
+                                            try {
+                                                const saved =
+                                                    await toggleBookmark(
+                                                        "tuition",
+                                                        tuition,
+                                                        user.email,
+                                                    );
+                                                await queryClient.invalidateQueries(
+                                                    [
+                                                        "saved-bookmarks",
+                                                        user.email,
+                                                    ],
+                                                );
+                                                toast.success(
+                                                    saved
+                                                        ? "Tuition saved"
+                                                        : "Tuition removed",
+                                                );
+                                            } catch (error) {
+                                                console.error(error);
+                                                toast.error(
+                                                    "Unable to update bookmark. Please try again.",
+                                                );
+                                            }
                                         }}
                                         className={`btn btn-outline w-full ${
                                             isSaved ? "btn-success" : ""

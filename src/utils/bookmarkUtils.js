@@ -1,7 +1,4 @@
-const STORAGE_KEY_PREFIX = "eTuitionBd_bookmarks_";
-
-const getStorageKey = (email) =>
-    `${STORAGE_KEY_PREFIX}${email?.toLowerCase() || "guest"}`;
+import api from "../api/api";
 
 const getItemId = (item) =>
     item?._id || item?.id || item?.tutorId || item?.tuitionId || "";
@@ -28,85 +25,72 @@ const normalizeTuition = (tuition) => ({
     status: tuition.status,
 });
 
-const readBookmarks = (email) => {
-    if (!email || typeof window === "undefined") {
-        return { tutors: [], tuitions: [] };
-    }
+const normalizeBookmarkResponse = (data) => ({
+    tutors: Array.isArray(data?.tutors) ? data.tutors : [],
+    tuitions: Array.isArray(data?.tuitions) ? data.tuitions : [],
+});
 
-    try {
-        const saved = window.localStorage.getItem(getStorageKey(email));
-        return saved ? JSON.parse(saved) : { tutors: [], tuitions: [] };
-    } catch (error) {
-        console.error("Failed to read bookmarks:", error);
-        return { tutors: [], tuitions: [] };
-    }
+export const getSavedBookmarks = async (email) => {
+    if (!email) return { tutors: [], tuitions: [] };
+
+    const res = await api.get("/bookmarks", {
+        params: { email },
+    });
+
+    return normalizeBookmarkResponse(res.data);
 };
 
-const writeBookmarks = (email, bookmarks) => {
-    if (!email || typeof window === "undefined") return;
-
-    try {
-        window.localStorage.setItem(
-            getStorageKey(email),
-            JSON.stringify(bookmarks),
-        );
-    } catch (error) {
-        console.error("Failed to save bookmarks:", error);
-    }
-};
-
-export const getSavedBookmarks = (email) => readBookmarks(email);
-
-export const getSavedIds = (type, email) => {
-    const bookmarks = readBookmarks(email);
+export const getSavedIds = async (type, email) => {
+    const bookmarks = await getSavedBookmarks(email);
     return (bookmarks[type === "tutor" ? "tutors" : "tuitions"] || []).map(
         (item) => item.id,
     );
 };
 
-export const isBookmarked = (type, id, email) => {
+export const isBookmarked = async (type, id, email) => {
     if (!id || !email) return false;
-    const ids = getSavedIds(type, email);
+
+    const ids = await getSavedIds(type, email);
     return ids.includes(id);
 };
 
-export const addBookmark = (type, item, email) => {
+export const addBookmark = async (type, item, email) => {
     if (!email || !item) return;
-
-    const bookmarks = readBookmarks(email);
-    const listKey = type === "tutor" ? "tutors" : "tuitions";
-    const existingIds = bookmarks[listKey].map((bookmark) => bookmark.id);
-    const id = getItemId(item);
-
-    if (!id || existingIds.includes(id)) return;
 
     const normalized =
         type === "tutor" ? normalizeTutor(item) : normalizeTuition(item);
-    bookmarks[listKey] = [normalized, ...bookmarks[listKey]];
-    writeBookmarks(email, bookmarks);
+
+    await api.post("/bookmarks", {
+        email,
+        type,
+        item: normalized,
+    });
 };
 
-export const removeBookmark = (type, id, email) => {
+export const removeBookmark = async (type, id, email) => {
     if (!id || !email) return;
 
-    const bookmarks = readBookmarks(email);
-    const listKey = type === "tutor" ? "tutors" : "tuitions";
-
-    bookmarks[listKey] = bookmarks[listKey].filter((item) => item.id !== id);
-    writeBookmarks(email, bookmarks);
+    await api.delete("/bookmarks", {
+        data: {
+            email,
+            type,
+            id,
+        },
+    });
 };
 
-export const toggleBookmark = (type, item, email) => {
+export const toggleBookmark = async (type, item, email) => {
     if (!email || !item) return false;
 
     const id = getItemId(item);
     if (!id) return false;
 
-    if (isBookmarked(type, id, email)) {
-        removeBookmark(type, id, email);
+    const bookmarked = await isBookmarked(type, id, email);
+    if (bookmarked) {
+        await removeBookmark(type, id, email);
         return false;
     }
 
-    addBookmark(type, item, email);
+    await addBookmark(type, item, email);
     return true;
 };

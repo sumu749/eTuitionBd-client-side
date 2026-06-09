@@ -1,26 +1,32 @@
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import { getSavedBookmarks, removeBookmark } from "../../utils/bookmarkUtils";
 
 const SavedItems = () => {
     const { user } = useAuth();
-    const [bookmarks, setBookmarks] = useState({ tutors: [], tuitions: [] });
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if (!user?.email) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setBookmarks({ tutors: [], tuitions: [] });
-            return;
-        }
+    const { data: bookmarks = { tutors: [], tuitions: [] }, isLoading } =
+        useQuery({
+            queryKey: ["saved-bookmarks", user?.email],
+            enabled: !!user?.email,
+            queryFn: async () => getSavedBookmarks(user.email),
+            initialData: { tutors: [], tuitions: [] },
+        });
 
-        setBookmarks(getSavedBookmarks(user.email));
-    }, [user]);
-
-    const handleRemove = (type, id) => {
+    const handleRemove = async (type, id) => {
         if (!user?.email) return;
-        removeBookmark(type, id, user.email);
-        setBookmarks(getSavedBookmarks(user.email));
+
+        try {
+            await removeBookmark(type, id, user.email);
+            await queryClient.invalidateQueries([
+                "saved-bookmarks",
+                user.email,
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
