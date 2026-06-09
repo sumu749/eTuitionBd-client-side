@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 
 import useAuth from "../../hooks/useAuth";
+import useStudent from "../../hooks/useStudent";
 import toast from "react-hot-toast";
 import api from "../../api/api";
 
 const TutorReviews = ({ tutorEmail }) => {
     const { user } = useAuth();
+    const [isStudent, roleLoading] = useStudent();
+    const navigate = useNavigate();
 
     const [rating, setRating] = useState(5);
 
@@ -25,34 +29,41 @@ const TutorReviews = ({ tutorEmail }) => {
     const handleReview = async (e) => {
         e.preventDefault();
 
+        if (!user?.email || !isStudent) {
+            toast.error("Only logged-in students can submit reviews.");
+            return;
+        }
+
+        if (!review.trim()) {
+            toast.error("Please enter your review before submitting.");
+            return;
+        }
+
         try {
             const reviewData = {
                 tutorEmail,
-
                 studentEmail: user.email,
-
                 studentName: user.displayName,
-
                 studentPhoto: user.photoURL,
-
                 rating,
-
                 review,
-
                 createdAt: new Date(),
             };
 
             await api.post("/reviews", reviewData);
 
-            toast.success("Review Added");
+            toast.success("Review added successfully.");
 
             setReview("");
 
             refetch();
         } catch (error) {
-            console.log(error);
+            console.error(error);
 
-            toast.error("Failed to add review");
+            toast.error(
+                error.response?.data?.message ||
+                    "Failed to add review. Please try again later.",
+            );
         }
     };
 
@@ -70,32 +81,55 @@ const TutorReviews = ({ tutorEmail }) => {
                     {average.toFixed(1)} ⭐
                 </p>
 
-                <form onSubmit={handleReview} className="space-y-4 mt-6">
-                    <select
-                        value={rating}
-                        onChange={(e) => setRating(e.target.value)}
-                        className="select select-bordered w-full bg-black"
-                    >
-                        <option value="5">5 Star</option>
+                {roleLoading ? (
+                    <p className="mt-6 text-slate-400">
+                        Checking review permission...
+                    </p>
+                ) : user?.email && isStudent ? (
+                    <form onSubmit={handleReview} className="space-y-4 mt-6">
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(Number(e.target.value))}
+                            className="select select-bordered w-full bg-black"
+                        >
+                            <option value="5">5 Star</option>
+                            <option value="4">4 Star</option>
+                            <option value="3">3 Star</option>
+                            <option value="2">2 Star</option>
+                            <option value="1">1 Star</option>
+                        </select>
 
-                        <option value="4">4 Star</option>
+                        <textarea
+                            value={review}
+                            onChange={(e) => setReview(e.target.value)}
+                            placeholder="Write review..."
+                            className="textarea textarea-bordered w-full bg-black"
+                        />
 
-                        <option value="3">3 Star</option>
-
-                        <option value="2">2 Star</option>
-
-                        <option value="1">1 Star</option>
-                    </select>
-
-                    <textarea
-                        value={review}
-                        onChange={(e) => setReview(e.target.value)}
-                        placeholder="Write review..."
-                        className="textarea textarea-bordered w-full bg-black"
-                    />
-
-                    <button className="btn btn-primary">Submit Review</button>
-                </form>
+                        <button type="submit" className="btn btn-primary">
+                            Submit Review
+                        </button>
+                    </form>
+                ) : (
+                    <div className="mt-6 rounded-3xl border border-slate-700 bg-slate-950 p-6">
+                        <p className="text-slate-300 mb-4">
+                            Only registered students may submit tutor reviews.
+                        </p>
+                        {!user?.email ? (
+                            <button
+                                type="button"
+                                onClick={() => navigate("/login")}
+                                className="btn btn-primary"
+                            >
+                                Log in to review
+                            </button>
+                        ) : (
+                            <p className="text-slate-400">
+                                Please use a student account to leave a review.
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="space-y-4">
