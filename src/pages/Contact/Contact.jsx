@@ -1,17 +1,41 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
+import api from "../../api/api";
 
 const Contact = () => {
     const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) =>
         setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // For now, just log — backend hookup can be added later.
-        console.log("Contact form submitted:", form);
-        alert("Message sent (demo)");
-        setForm({ name: "", email: "", message: "" });
+
+        if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+            toast.error(
+                "Please complete all fields before sending your message.",
+            );
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const response = await api.post("/contacts", form);
+            toast.success(
+                response.data?.message || "Your message was sent successfully.",
+            );
+            setForm({ name: "", email: "", message: "" });
+        } catch (error) {
+            console.error("Contact form submission failed:", error);
+            toast.error(
+                error.response?.data?.message ||
+                    "Unable to send your message right now. Please try again later.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -49,8 +73,12 @@ const Contact = () => {
                         className="textarea w-full bg-slate-900 border-slate-700 text-slate-100"
                     />
 
-                    <button className="btn btn-primary rounded-full">
-                        Send Message
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="btn btn-primary rounded-full"
+                    >
+                        {isSubmitting ? "Sending..." : "Send Message"}
                     </button>
                 </form>
             </div>
