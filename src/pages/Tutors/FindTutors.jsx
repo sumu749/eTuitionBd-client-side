@@ -12,6 +12,7 @@ const FindTutors = () => {
     const [tutors, setTutors] = useState([]);
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [optimisticBookmarks, setOptimisticBookmarks] = useState(new Set());
     const { user } = useAuth();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -21,6 +22,8 @@ const FindTutors = () => {
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
+        staleTime: 0,
+        refetchOnMount: "stale",
     });
 
     useEffect(() => {
@@ -56,8 +59,11 @@ const FindTutors = () => {
         return () => (mounted = false);
     }, [user]);
 
-    const bookmarkedTutorIds =
-        savedBookmarks?.tutors?.map((bookmark) => bookmark.id) || [];
+    const savedTutorIds = savedBookmarks?.tutors?.map((bookmark) => bookmark.id) || [];
+    const bookmarkedTutorIds = new Set([
+        ...savedTutorIds,
+        ...optimisticBookmarks,
+    ]);
 
     const handleBookmark = async (tutor) => {
         if (!user?.email) {
@@ -66,15 +72,43 @@ const FindTutors = () => {
             return;
         }
 
+        const tutorId = tutor._id || tutor.id;
+        const isCurrentlyBookmarked = bookmarkedTutorIds.has(tutorId);
+
+        // Optimistic update
+        setOptimisticBookmarks((prev) => {
+            const newSet = new Set(prev);
+            if (isCurrentlyBookmarked) {
+                newSet.delete(tutorId);
+            } else {
+                newSet.add(tutorId);
+            }
+            return newSet;
+        });
+
         try {
             const saved = await toggleBookmark("tutor", tutor, user.email);
-            await queryClient.invalidateQueries([
-                "saved-bookmarks",
-                user.email,
-            ]);
+            console.log("[DEBUG] FindTutors - toggleBookmark returned:", saved);
+            await queryClient.refetchQueries({
+                queryKey: ["saved-bookmarks", user.email],
+                type: "all",
+            });
+            console.log("[DEBUG] FindTutors - refetch completed");
+            // Clear optimistic state after server confirmation
+            setOptimisticBookmarks(new Set());
             toast.success(saved ? "Tutor saved" : "Tutor removed");
         } catch (error) {
             console.error(error);
+            // Revert optimistic update on error
+            setOptimisticBookmarks((prev) => {
+                const newSet = new Set(prev);
+                if (isCurrentlyBookmarked) {
+                    newSet.add(tutorId);
+                } else {
+                    newSet.delete(tutorId);
+                }
+                return newSet;
+            });
             toast.error("Unable to update bookmark. Please try again.");
         }
     };
@@ -101,7 +135,7 @@ const FindTutors = () => {
                         <TutorCard
                             key={tutor._id || tutor.id || tutor.name}
                             tutor={tutor}
-                            isBookmarked={bookmarkedTutorIds.includes(
+                            isBookmarked={bookmarkedTutorIds.has(
                                 tutor._id || tutor.id,
                             )}
                             onBookmark={handleBookmark}

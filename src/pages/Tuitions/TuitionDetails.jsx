@@ -19,6 +19,7 @@ const TuitionDetails = () => {
     const { user } = useAuth();
     const [openModal, setOpenModal] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
+    const [isSavedOptimistic, setIsSavedOptimistic] = useState(false);
     const [isTutor] = useTutor();
     const [isStudent] = useStudent();
     const queryClient = useQueryClient();
@@ -39,14 +40,18 @@ const TuitionDetails = () => {
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
+        staleTime: 0,
+        refetchOnMount: "stale",
     });
 
-    const isSaved =
+    const queryBasedIsSaved =
         user?.email && tuition
             ? savedBookmarks.tuitions.some(
                   (bookmark) => bookmark.id === tuition._id,
               )
             : false;
+
+    const isSaved = isSavedOptimistic || queryBasedIsSaved;
 
     const { data: alreadyApplied } = useQuery({
         queryKey: ["already-applied", id, user?.email],
@@ -138,6 +143,9 @@ const TuitionDetails = () => {
                                                 return;
                                             }
 
+                                            // Optimistic update
+                                            setIsSavedOptimistic((prev) => !prev);
+
                                             try {
                                                 const saved =
                                                     await toggleBookmark(
@@ -145,12 +153,15 @@ const TuitionDetails = () => {
                                                         tuition,
                                                         user.email,
                                                     );
-                                                await queryClient.invalidateQueries(
-                                                    [
+                                                await queryClient.refetchQueries({
+                                                    queryKey: [
                                                         "saved-bookmarks",
                                                         user.email,
                                                     ],
-                                                );
+                                                    type: "all",
+                                                });
+                                                // Clear optimistic state after server confirmation
+                                                setIsSavedOptimistic(false);
                                                 toast.success(
                                                     saved
                                                         ? "Tuition saved"
@@ -158,6 +169,10 @@ const TuitionDetails = () => {
                                                 );
                                             } catch (error) {
                                                 console.error(error);
+                                                // Revert optimistic update on error
+                                                setIsSavedOptimistic(
+                                                    (prev) => !prev,
+                                                );
                                                 toast.error(
                                                     "Unable to update bookmark. Please try again.",
                                                 );

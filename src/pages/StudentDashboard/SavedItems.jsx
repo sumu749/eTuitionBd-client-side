@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
+import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { getSavedBookmarks, removeBookmark } from "../../utils/bookmarkUtils";
 
@@ -7,25 +8,30 @@ const SavedItems = () => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
-    const { data: bookmarks = { tutors: [], tuitions: [] }, isLoading } =
+    const { data: bookmarks = { tutors: [], tuitions: [] }, isLoading, refetch } =
         useQuery({
             queryKey: ["saved-bookmarks", user?.email],
             enabled: !!user?.email,
             queryFn: async () => getSavedBookmarks(user.email),
             initialData: { tutors: [], tuitions: [] },
+            staleTime: 0,
+            refetchOnMount: "stale",
+            refetchOnWindowFocus: "stale",
         });
 
-    const handleRemove = async (type, id) => {
+    const handleRemove = async (type, bookmarkId) => {
         if (!user?.email) return;
 
         try {
-            await removeBookmark(type, id, user.email);
-            await queryClient.invalidateQueries([
-                "saved-bookmarks",
-                user.email,
-            ]);
+            await removeBookmark(bookmarkId);
+            await queryClient.refetchQueries({
+                queryKey: ["saved-bookmarks", user.email],
+                type: "all",
+            });
+            toast.success(type === "tutor" ? "Tutor removed" : "Tuition removed");
         } catch (error) {
-            console.error(error);
+            console.error("[ERROR] handleRemove:", error);
+            toast.error("Failed to remove bookmark. Please try again.");
         }
     };
 
@@ -102,7 +108,7 @@ const SavedItems = () => {
                                                 onClick={() =>
                                                     handleRemove(
                                                         "tutor",
-                                                        tutor.id,
+                                                        tutor.bookmarkId,
                                                     )
                                                 }
                                             >
@@ -169,7 +175,7 @@ const SavedItems = () => {
                                                 onClick={() =>
                                                     handleRemove(
                                                         "tuition",
-                                                        tuition.id,
+                                                        tuition.bookmarkId,
                                                     )
                                                 }
                                             >

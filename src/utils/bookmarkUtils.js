@@ -25,10 +25,26 @@ const normalizeTuition = (tuition) => ({
     status: tuition.status,
 });
 
-const normalizeBookmarkResponse = (data) => ({
-    tutors: Array.isArray(data?.tutors) ? data.tutors : [],
-    tuitions: Array.isArray(data?.tuitions) ? data.tuitions : [],
-});
+const normalizeBookmarkResponse = (data) => {
+    if (!Array.isArray(data)) {
+        return { tutors: [], tuitions: [] };
+    }
+
+    const tutors = data
+        .filter((b) => b.type === "tutor")
+        .map((b) => ({
+            ...b.item,
+            bookmarkId: b._id, // Add MongoDB bookmark ID
+        }));
+    const tuitions = data
+        .filter((b) => b.type === "tuition")
+        .map((b) => ({
+            ...b.item,
+            bookmarkId: b._id, // Add MongoDB bookmark ID
+        }));
+
+    return { tutors, tuitions };
+};
 
 export const getSavedBookmarks = async (email) => {
     if (!email) return { tutors: [], tuitions: [] };
@@ -37,6 +53,7 @@ export const getSavedBookmarks = async (email) => {
         params: { email },
     });
 
+    console.log("[DEBUG] getSavedBookmarks response:", res.data);
     return normalizeBookmarkResponse(res.data);
 };
 
@@ -59,24 +76,37 @@ export const addBookmark = async (type, item, email) => {
 
     const normalized =
         type === "tutor" ? normalizeTutor(item) : normalizeTuition(item);
+    const itemId = getItemId(item);
 
-    await api.post("/bookmarks", {
+    if (!itemId) return;
+
+    const payload = {
         email,
         type,
         item: normalized,
-    });
+    };
+
+    if (type === "tuition") {
+        payload.tuitionId = itemId;
+    } else {
+        payload.id = itemId;
+    }
+
+    console.log("[DEBUG] addBookmark payload:", payload);
+    const res = await api.post("/bookmarks", payload);
+    console.log("[DEBUG] addBookmark response:", res.data);
 };
 
-export const removeBookmark = async (type, id, email) => {
-    if (!id || !email) return;
+export const removeBookmark = async (bookmarkId) => {
+    if (!bookmarkId) return;
 
-    await api.delete("/bookmarks", {
-        data: {
-            email,
-            type,
-            id,
+    console.log("[DEBUG] removeBookmark - deleting bookmark:", bookmarkId);
+    const res = await api.delete("/bookmarks", {
+        params: {
+            id: bookmarkId,
         },
     });
+    console.log("[DEBUG] removeBookmark response:", res.data);
 };
 
 export const toggleBookmark = async (type, item, email) => {
@@ -85,12 +115,24 @@ export const toggleBookmark = async (type, item, email) => {
     const id = getItemId(item);
     if (!id) return false;
 
+    console.log("[DEBUG] toggleBookmark - checking if bookmarked:", {
+        type,
+        id,
+        email,
+    });
     const bookmarked = await isBookmarked(type, id, email);
+    console.log(
+        "[DEBUG] toggleBookmark - is currently bookmarked:",
+        bookmarked,
+    );
+
     if (bookmarked) {
+        console.log("[DEBUG] toggleBookmark - removing bookmark");
         await removeBookmark(type, id, email);
         return false;
     }
 
+    console.log("[DEBUG] toggleBookmark - adding bookmark");
     await addBookmark(type, item, email);
     return true;
 };

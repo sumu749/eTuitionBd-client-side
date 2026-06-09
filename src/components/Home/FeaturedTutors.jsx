@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 
 const FeaturedTutors = () => {
     const [userRole, setUserRole] = useState(null);
+    const [optimisticBookmarks, setOptimisticBookmarks] = useState(new Set());
     const { user } = useAuth();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -20,6 +21,8 @@ const FeaturedTutors = () => {
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
+        staleTime: 0,
+        refetchOnMount: "stale",
     });
 
     const bookmarkedTutors = savedBookmarks?.tutors || [];
@@ -71,6 +74,12 @@ const FeaturedTutors = () => {
         }
     }, [user?.email]);
 
+    const savedTutorIds = bookmarkedTutors?.map((bookmark) => bookmark.id) || [];
+    const allBookmarkedIds = new Set([
+        ...savedTutorIds,
+        ...optimisticBookmarks,
+    ]);
+
     const handleBookmark = async (tutor) => {
         if (!user?.email) {
             toast("Login to save bookmarks", { duration: 3000 });
@@ -78,19 +87,45 @@ const FeaturedTutors = () => {
             return;
         }
 
-        const isBookmarked = bookmarkedTutors.some((t) => t.id === tutor._id);
+        const tutorId = tutor._id || tutor.id;
+        const isCurrentlyBookmarked = allBookmarkedIds.has(tutorId);
+
+        // Optimistic update
+        setOptimisticBookmarks((prev) => {
+            const newSet = new Set(prev);
+            if (isCurrentlyBookmarked) {
+                newSet.delete(tutorId);
+            } else {
+                newSet.add(tutorId);
+            }
+            return newSet;
+        });
 
         try {
             await toggleBookmark("tutor", tutor, user.email);
-            await queryClient.invalidateQueries([
-                "saved-bookmarks",
-                user.email,
-            ]);
+            await queryClient.refetchQueries({
+                queryKey: ["saved-bookmarks", user.email],
+                type: "all",
+            });
+            // Clear optimistic state after server confirmation
+            setOptimisticBookmarks(new Set());
             toast.success(
-                isBookmarked ? "Tutor removed from bookmarks" : "Tutor saved!",
+                isCurrentlyBookmarked
+                    ? "Tutor removed from bookmarks"
+                    : "Tutor saved!",
             );
         } catch (error) {
             console.error(error);
+            // Revert optimistic update on error
+            setOptimisticBookmarks((prev) => {
+                const newSet = new Set(prev);
+                if (isCurrentlyBookmarked) {
+                    newSet.add(tutorId);
+                } else {
+                    newSet.delete(tutorId);
+                }
+                return newSet;
+            });
             toast.error("Unable to update bookmark. Please try again.");
         }
     };
@@ -123,8 +158,8 @@ const FeaturedTutors = () => {
                             >
                                 <TutorCard
                                     tutor={tutor}
-                                    isBookmarked={bookmarkedTutors.some(
-                                        (t) => t.id === tutor._id,
+                                    isBookmarked={allBookmarkedIds.has(
+                                        tutor._id || tutor.id,
                                     )}
                                     onBookmark={handleBookmark}
                                     showBookmark={userRole === "student"}

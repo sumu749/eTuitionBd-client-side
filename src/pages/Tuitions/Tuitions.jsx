@@ -21,10 +21,9 @@ const Tuitions = () => {
     const [sortBy, setSortBy] = useState("");
     const [page, setPage] = useState(1);
     const [selectedClass, setSelectedClass] = useState("");
-
     const [selectedSubject, setSelectedSubject] = useState("");
-
     const [selectedLocation, setSelectedLocation] = useState("");
+    const [optimisticBookmarks, setOptimisticBookmarks] = useState(new Set());
     const { user } = useAuth();
     const [isStudent] = useStudent();
     const navigate = useNavigate();
@@ -35,6 +34,8 @@ const Tuitions = () => {
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
+        staleTime: 0,
+        refetchOnMount: "stale",
     });
 
     const { data, isLoading } = useQuery({
@@ -59,8 +60,13 @@ const Tuitions = () => {
     const tuitions = data?.tuitions || [];
     const totalPages = data?.totalPages || 1;
 
-    const bookmarkedTuitionIds =
+    const savedTuitionIds =
         savedBookmarks?.tuitions?.map((bookmark) => bookmark.id) || [];
+
+    const bookmarkedTuitionIds = new Set([
+        ...savedTuitionIds,
+        ...optimisticBookmarks,
+    ]);
 
     const handleBookmark = async (tuition) => {
         if (!user?.email) {
@@ -69,19 +75,45 @@ const Tuitions = () => {
             return;
         }
 
+        const tuitionId = tuition._id || tuition.id;
+        const isCurrentlyBookmarked = bookmarkedTuitionIds.has(tuitionId);
+
+        // Optimistic update
+        setOptimisticBookmarks((prev) => {
+            const newSet = new Set(prev);
+            if (isCurrentlyBookmarked) {
+                newSet.delete(tuitionId);
+            } else {
+                newSet.add(tuitionId);
+            }
+            return newSet;
+        });
+
         try {
             const isSaved = await toggleBookmark(
                 "tuition",
                 tuition,
                 user.email,
             );
-            await queryClient.invalidateQueries([
-                "saved-bookmarks",
-                user.email,
-            ]);
+            await queryClient.refetchQueries({
+                queryKey: ["saved-bookmarks", user.email],
+                type: "all",
+            });
+            // Clear optimistic state after server confirmation
+            setOptimisticBookmarks(new Set());
             toast.success(isSaved ? "Tuition saved" : "Tuition removed");
         } catch (error) {
             console.error(error);
+            // Revert optimistic update on error
+            setOptimisticBookmarks((prev) => {
+                const newSet = new Set(prev);
+                if (isCurrentlyBookmarked) {
+                    newSet.add(tuitionId);
+                } else {
+                    newSet.delete(tuitionId);
+                }
+                return newSet;
+            });
             toast.error("Unable to update bookmark. Please try again.");
         }
     };
@@ -248,14 +280,14 @@ const Tuitions = () => {
                                         type="button"
                                         onClick={() => handleBookmark(tuition)}
                                         className={`btn btn-outline rounded-2xl w-full ${
-                                            bookmarkedTuitionIds.includes(
+                                            bookmarkedTuitionIds.has(
                                                 tuition._id,
                                             )
                                                 ? "btn-success"
                                                 : ""
                                         }`}
                                     >
-                                        {bookmarkedTuitionIds.includes(
+                                        {bookmarkedTuitionIds.has(
                                             tuition._id,
                                         ) ? (
                                             <>

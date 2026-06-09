@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { Link, useNavigate, useParams } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
     Mail,
     MapPin,
@@ -24,6 +25,7 @@ const TutorDetails = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [isStudent] = useStudent();
+    const [isSavedOptimistic, setIsSavedOptimistic] = useState(false);
     const queryClient = useQueryClient();
 
     const {
@@ -43,6 +45,8 @@ const TutorDetails = () => {
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
+        staleTime: 0,
+        refetchOnMount: "stale",
     });
 
     const handleHireTutor = () => {
@@ -66,12 +70,14 @@ const TutorDetails = () => {
         return <LoadingSpinner />;
     }
 
-    const isSaved =
+    const queryBasedIsSaved =
         user?.email && tutor
             ? savedBookmarks.tutors.some(
                   (bookmark) => bookmark.id === (tutor._id || tutor.id),
               )
             : false;
+
+    const isSaved = isSavedOptimistic || queryBasedIsSaved;
 
     if (error) {
         return (
@@ -185,6 +191,9 @@ const TutorDetails = () => {
                                                 return;
                                             }
 
+                                            // Optimistic update
+                                            setIsSavedOptimistic((prev) => !prev);
+
                                             try {
                                                 const saved =
                                                     await toggleBookmark(
@@ -192,12 +201,15 @@ const TutorDetails = () => {
                                                         tutor,
                                                         user.email,
                                                     );
-                                                await queryClient.invalidateQueries(
-                                                    [
+                                                await queryClient.refetchQueries({
+                                                    queryKey: [
                                                         "saved-bookmarks",
                                                         user.email,
                                                     ],
-                                                );
+                                                    type: "all",
+                                                });
+                                                // Clear optimistic state after server confirmation
+                                                setIsSavedOptimistic(false);
                                                 toast.success(
                                                     saved
                                                         ? "Tutor saved"
@@ -205,6 +217,10 @@ const TutorDetails = () => {
                                                 );
                                             } catch (error) {
                                                 console.error(error);
+                                                // Revert optimistic update on error
+                                                setIsSavedOptimistic(
+                                                    (prev) => !prev,
+                                                );
                                                 toast.error(
                                                     "Unable to update bookmark. Please try again.",
                                                 );
