@@ -87,6 +87,7 @@ const CheckoutForm = ({ application }) => {
                     tutorEmail: application.tutorEmail,
 
                     tuitionId: application.tuitionId,
+                    applicationId: application._id,
                     tuitionTitle: application.subject || "Tuition Session",
 
                     amount,
