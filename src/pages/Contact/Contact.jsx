@@ -5,6 +5,8 @@ import api from "../../api/api";
 const Contact = () => {
     const [form, setForm] = useState({ name: "", email: "", message: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const contactEndpoint =
+        import.meta.env.VITE_CONTACT_ENDPOINT || "/contacts";
 
     const handleChange = (e) =>
         setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
@@ -22,17 +24,23 @@ const Contact = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await api.post("/contacts", form);
+            const response = await api.post(contactEndpoint, form);
             toast.success(
                 response.data?.message || "Your message was sent successfully.",
             );
             setForm({ name: "", email: "", message: "" });
         } catch (error) {
             console.error("Contact form submission failed:", error);
-            toast.error(
-                error.response?.data?.message ||
-                    "Unable to send your message right now. Please try again later.",
-            );
+            if (error.response?.status === 404) {
+                toast.error(
+                    "Contact service not found. Please verify the backend endpoint.",
+                );
+            } else {
+                toast.error(
+                    error.response?.data?.message ||
+                        "Unable to send your message right now. Please try again later.",
+                );
+            }
         } finally {
             setIsSubmitting(false);
         }
