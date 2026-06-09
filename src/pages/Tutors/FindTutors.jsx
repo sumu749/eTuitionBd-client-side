@@ -1,11 +1,11 @@
 /* eslint-disable indent */
 import { useEffect, useState } from "react";
 import api from "../../api/api";
-import { Star, Bookmark, BookmarkMinus } from "lucide-react";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { getSavedIds, toggleBookmark } from "../../utils/bookmarkUtils";
+import TutorCard from "../../components/Tutor/TutorCard";
 
 const FindTutors = () => {
     const [tutors, setTutors] = useState([]);
@@ -84,139 +84,30 @@ const FindTutors = () => {
             ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
                     {tutors.map((tutor) => (
-                        <div
-                            key={tutor.id || tutor.name}
-                            className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden"
-                        >
-                            <img
-                                src={
-                                    tutor.photoURL ||
-                                    tutor.image ||
-                                    "https://i.pravatar.cc/300?img=65"
-                                }
-                                alt={tutor.name}
-                                className="h-56 w-full object-cover"
-                            />
-
-                            <div className="p-5">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Star
-                                        size={16}
-                                        className="fill-yellow-400 text-yellow-400"
-                                    />
-                                    <span className="text-slate-300">
-                                        4.9 Rating
-                                    </span>
-                                </div>
-
-                                <h3 className="font-bold text-xl text-slate-100">
-                                    {tutor.name}
-                                </h3>
-                                <p className="text-cyan-300">{tutor.subject}</p>
-                                <p className="text-slate-400 mt-1">
-                                    {tutor.university}
-                                </p>
-
-                                <div className="mt-4 flex gap-2">
-                                    {userRole === "student" ? (
-                                        <>
-                                            <div className="flex flex-wrap gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleBookmark(tutor)
-                                                    }
-                                                    className={`btn btn-outline btn-sm rounded-full ${
-                                                        bookmarkedTutorIds.includes(
-                                                            tutor._id ||
-                                                                tutor.id,
-                                                        )
-                                                            ? "btn-success"
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    {bookmarkedTutorIds.includes(
-                                                        tutor._id || tutor.id,
-                                                    ) ? (
-                                                        <>
-                                                            <BookmarkMinus className="w-4 h-4 mr-2" />
-                                                            Saved
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Bookmark className="w-4 h-4 mr-2" />
-                                                            Save
-                                                        </>
-                                                    )}
-                                                </button>
-                                                <Link
-                                                    to={`/tutors/${tutor._id || tutor.id || ""}`}
-                                                    className="btn btn-primary rounded-full"
-                                                >
-                                                    View Details
-                                                </Link>
-                                            </div>
-                                        </>
-                                    ) : userRole === "tutor" ? (
-                                        <>
-                                            <button
-                                                className="btn btn-primary rounded-full flex-1"
-                                                onClick={() =>
-                                                    navigate("/dashboard/tutor")
-                                                }
-                                            >
-                                                My Profile
-                                            </button>
-                                            <button
-                                                className="btn btn-outline rounded-full"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/tutors/${tutor.id || ""}`,
-                                                    )
-                                                }
-                                            >
-                                                View
-                                            </button>
-                                        </>
-                                    ) : user ? (
-                                        <>
-                                            <button
-                                                className="btn btn-primary rounded-full flex-1"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/tutors/${tutor.id || ""}`,
-                                                    )
-                                                }
-                                            >
-                                                View Profile
-                                            </button>
-                                            <button className="btn btn-outline rounded-full">
-                                                Message
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button
-                                                className="btn btn-primary rounded-full flex-1"
-                                                onClick={() =>
-                                                    navigate("/login")
-                                                }
-                                            >
-                                                Login to apply
-                                            </button>
-                                            <button
-                                                className="btn btn-outline rounded-full"
-                                                onClick={() =>
-                                                    navigate("/register")
-                                                }
-                                            >
-                                                Register
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <TutorCard
+                            key={tutor._id || tutor.id || tutor.name}
+                            tutor={tutor}
+                            isBookmarked={bookmarkedTutorIds.includes(
+                                tutor._id || tutor.id,
+                            )}
+                            onBookmark={handleBookmark}
+                            showBookmark={userRole === "student"}
+                            userRole={userRole}
+                            user={user}
+                            onViewDetails={(t) =>
+                                navigate(`/tutors/${t._id || t.id || ""}`)
+                            }
+                            onMyProfile={() => navigate("/dashboard/tutor")}
+                            onViewProfile={(t) =>
+                                navigate(`/tutors/${t._id || t.id || ""}`)
+                            }
+                            onMessage={() => {
+                                toast("Message feature coming soon!", {
+                                    duration: 3000,
+                                });
+                            }}
+                            onLoginToApply={() => navigate("/login")}
+                        />
                     ))}
                 </div>
             )}

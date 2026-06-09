@@ -1,12 +1,23 @@
-import { Star } from "lucide-react";
+/* eslint-disable indent */
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import api from "../../api/api";
+import TutorCard from "../Tutor/TutorCard";
+import {
+    getSavedBookmarks,
+    addBookmark,
+    removeBookmark,
+} from "../../utils/bookmarkUtils";
+import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const FeaturedTutors = () => {
     const [tutors, setTutors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [bookmarkedTutors, setBookmarkedTutors] = useState([]);
+    const [userRole, setUserRole] = useState(null);
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,9 +25,16 @@ const FeaturedTutors = () => {
 
         const fetchTutors = async () => {
             try {
-                const res = await api.get("/public-tutors?limit=50");
+                const [tRes, roleRes] = await Promise.all([
+                    api.get("/public-tutors?limit=50"),
+                    user?.email
+                        ? api.get(
+                              `/users/role/${encodeURIComponent(user.email)}`,
+                          )
+                        : Promise.resolve({ data: {} }),
+                ]);
                 if (mounted) {
-                    const users = res.data || [];
+                    const users = tRes.data || [];
                     const sorted = users
                         .slice()
                         .sort(
@@ -25,10 +43,12 @@ const FeaturedTutors = () => {
                                 new Date(a.createdAt || 0),
                         );
                     setTutors(sorted.slice(0, 4));
+                    setUserRole(roleRes?.data?.role || null);
                 }
             } catch {
                 if (mounted) {
                     setTutors([]);
+                    setUserRole(null);
                 }
             } finally {
                 if (mounted) setLoading(false);
@@ -40,7 +60,36 @@ const FeaturedTutors = () => {
         return () => {
             mounted = false;
         };
-    }, []);
+    }, [user]);
+
+    useEffect(() => {
+        if (user?.email) {
+            const saved = getSavedBookmarks(user.email);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setBookmarkedTutors(saved.tutors || []);
+        }
+    }, [user?.email]);
+
+    const handleBookmark = (tutor) => {
+        if (!user?.email) {
+            toast("Login to save bookmarks", { duration: 3000 });
+            navigate("/login");
+            return;
+        }
+
+        const isBookmarked = bookmarkedTutors.some((t) => t.id === tutor._id);
+        if (isBookmarked) {
+            removeBookmark("tutor", tutor._id, user.email);
+        } else {
+            addBookmark("tutor", tutor, user.email);
+        }
+
+        const saved = getSavedBookmarks(user.email);
+        setBookmarkedTutors(saved.tutors || []);
+        toast.success(
+            isBookmarked ? "Tutor removed from bookmarks" : "Tutor saved!",
+        );
+    };
 
     return (
         <section className="pt-20">
@@ -66,50 +115,33 @@ const FeaturedTutors = () => {
                         {tutors.map((tutor) => (
                             <motion.div
                                 whileHover={{ y: -10 }}
-                                key={tutor.id || tutor.name}
-                                className="bg-slate-900/90 border border-slate-800 rounded-4xl overflow-hidden"
+                                key={tutor._id || tutor.name}
                             >
-                                <img
-                                    src={
-                                        tutor.photoURL ||
-                                        tutor.image ||
-                                        "https://i.pravatar.cc/300?img=65"
+                                <TutorCard
+                                    tutor={tutor}
+                                    isBookmarked={bookmarkedTutors.some(
+                                        (t) => t.id === tutor._id,
+                                    )}
+                                    onBookmark={handleBookmark}
+                                    showBookmark={userRole === "student"}
+                                    userRole={userRole}
+                                    user={user}
+                                    onViewDetails={(t) =>
+                                        navigate(`/tutor-details/${t._id}`)
                                     }
-                                    alt={tutor.name}
-                                    className="h-72 w-full object-cover"
+                                    onMyProfile={() =>
+                                        navigate("/dashboard/tutor")
+                                    }
+                                    onViewProfile={(t) =>
+                                        navigate(`/tutor-details/${t._id}`)
+                                    }
+                                    onMessage={() => {
+                                        toast("Message feature coming soon!", {
+                                            duration: 3000,
+                                        });
+                                    }}
+                                    onLoginToApply={() => navigate("/login")}
                                 />
-
-                                <div className="p-6">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Star
-                                            size={16}
-                                            className="fill-yellow-400 text-yellow-400"
-                                        />
-
-                                        <span className="text-slate-300">
-                                            4.9 Rating
-                                        </span>
-                                    </div>
-
-                                    <h3 className="font-bold text-xl text-slate-100">
-                                        {tutor.name}
-                                    </h3>
-
-                                    <p className="text-cyan-300">
-                                        {tutor.subject}
-                                    </p>
-
-                                    <p className="text-slate-400 mt-1">
-                                        {tutor.university}
-                                    </p>
-
-                                    <button
-                                        onClick={() => navigate("/tutors")}
-                                        className="btn btn-primary rounded-full mt-6 w-full"
-                                    >
-                                        View Profile
-                                    </button>
-                                </div>
                             </motion.div>
                         ))}
                     </div>
