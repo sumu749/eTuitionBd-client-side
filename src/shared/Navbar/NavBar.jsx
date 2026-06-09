@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
-import { GraduationCap, Menu, UserCircle } from "lucide-react";
+import { Menu, UserCircle } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import useStudent from "../../hooks/useStudent";
 
@@ -53,9 +53,11 @@ const NavBar = () => {
                 {/* Logo */}
                 <div className="navbar-start hidden lg:flex">
                     <NavLink to="/" className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl bg-linear-to-r from-cyan-400 to-fuchsia-500 flex items-center justify-center text-slate-950">
-                            <GraduationCap size={22} />
-                        </div>
+                        <img
+                            src="/favicon.svg"
+                            alt="eTuitionBd Logo"
+                            className="w-11 h-11"
+                        />
 
                         <div>
                             <h2 className="font-extrabold text-xl">

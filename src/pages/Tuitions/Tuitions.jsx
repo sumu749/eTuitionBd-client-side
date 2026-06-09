@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router";
 import {
@@ -18,6 +18,7 @@ import { getSavedBookmarks, toggleBookmark } from "../../utils/bookmarkUtils";
 
 const Tuitions = () => {
     const [search, setSearch] = useState("");
+    const [searchText, setSearchText] = useState("");
     const [sortBy, setSortBy] = useState("");
     const [page, setPage] = useState(1);
     const [selectedClass, setSelectedClass] = useState("");
@@ -38,7 +39,7 @@ const Tuitions = () => {
         refetchOnMount: "stale",
     });
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isFetching } = useQuery({
         queryKey: [
             "approved-tuitions",
             search,
@@ -56,9 +57,22 @@ const Tuitions = () => {
 
             return res.data;
         },
+        keepPreviousData: true,
+        staleTime: 1000 * 60 * 2,
+        refetchOnWindowFocus: false,
+        placeholderData: { tuitions: [], totalPages: 1 },
     });
     const tuitions = data?.tuitions || [];
     const totalPages = data?.totalPages || 1;
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSearch(searchText);
+            setPage(1);
+        }, 350);
+
+        return () => clearTimeout(timer);
+    }, [searchText]);
 
     const savedTuitionIds =
         savedBookmarks?.tuitions?.map((bookmark) => bookmark.id) || [];
@@ -118,23 +132,25 @@ const Tuitions = () => {
         }
     };
 
-    if (isLoading) {
+    if (isLoading && tuitions.length === 0) {
         return <LoadingSpinner />;
     }
 
     return (
         <section className="max-w-7xl mx-auto px-4 py-12">
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <div className="grid md:grid-cols-3 gap-4 mb-16 items-center justify-items-center mx-auto max-w-6xl">
                 {/* Search */}
                 <input
                     type="text"
                     placeholder="Search by subject or location"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                     className="input input-bordered w-full bg-slate-500 "
                 />
 
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                {/* filter */}
+                <div className="grid md:grid-cols-3 gap-4 ">
                     {/* Class Filter */}
                     <select
                         value={selectedClass}
@@ -189,7 +205,7 @@ const Tuitions = () => {
                 <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="select select-bordered bg-slate-500 w-full md:w-48"
+                    className="select select-bordered bg-slate-500 w-full "
                 >
                     <option value="">Sort By</option>
                     <option value="budget-low">Budget Low → High</option>
@@ -210,6 +226,12 @@ const Tuitions = () => {
                 <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
                     Browse approved tuition opportunities and apply as a tutor.
                 </p>
+
+                {isFetching && !isLoading && (
+                    <p className="text-sm text-slate-400 mt-4">
+                        Updating results...
+                    </p>
+                )}
             </div>
 
             {tuitions.length === 0 ? (

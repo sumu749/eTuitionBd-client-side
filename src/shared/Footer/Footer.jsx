@@ -1,4 +1,3 @@
-import { GraduationCap } from "lucide-react";
 import { FaFacebook, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
 import { NavLink } from "react-router";
 
@@ -11,9 +10,11 @@ const Footer = () => {
                         {/* Logo */}
                         <div className="navbar-start hidden lg:flex">
                             <NavLink to="/" className="flex items-center gap-3">
-                                <div className="w-11 h-11 rounded-2xl bg-linear-to-r from-cyan-400 to-fuchsia-500 flex items-center justify-center text-slate-950">
-                                    <GraduationCap size={22} />
-                                </div>
+                                <img
+                                    src="/favicon.svg"
+                                    alt="eTuitionBd Logo"
+                                    className="w-11 h-11"
+                                />
 
                                 <div>
                                     <h2 className="font-extrabold text-xl">
