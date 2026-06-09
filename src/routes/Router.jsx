@@ -18,7 +18,6 @@ import PostTuition from "../pages/StudentDashboard/PostTuition";
 import MyTuitions from "../pages/StudentDashboard/MyTuitions";
 import AppliedTutors from "../pages/StudentDashboard/AppliedTutors";
 import Payments from "../pages/StudentDashboard/Payments";
-import ProfileSettings from "../pages/StudentDashboard/ProfileSettings";
 import SavedItems from "../pages/StudentDashboard/SavedItems";
 import Tuitions from "../pages/Tuitions/Tuitions";
 import TuitionDetails from "../pages/Tuitions/TuitionDetails";
@@ -35,56 +34,25 @@ import Checkout from "../pages/Checkout/Checkout";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import PaymentDetails from "../pages/StudentDashboard/PaymentDetails";
 import TutorDetails from "../pages/Tutors/TutorDetails";
+// Shared profile — works for student, tutor, and admin
+import ProfileSettings from "../pages/SharedProfile/ProfileSettings";
 
 export const router = createBrowserRouter([
     {
         path: "/",
         element: <MainLayout />,
         children: [
-            {
-                index: true,
-                element: <Home />,
-            },
-            {
-                path: "register",
-                element: <Register />,
-            },
-            {
-                path: "login",
-                element: <Login />,
-            },
-            {
-                path: "unauthorized",
-                element: <Unauthorized />,
-            },
-            {
-                path: "tuitions",
-                element: <Tuitions />,
-            },
-            {
-                path: "about",
-                element: <About />,
-            },
-            {
-                path: "contact",
-                element: <Contact />,
-            },
-            {
-                path: "tutors",
-                element: <FindTutors />,
-            },
-            {
-                path: "tutors/:id",
-                element: <TutorDetails />,
-            },
-            {
-                path: "tuitions/:id",
-                element: <TuitionDetails />,
-            },
-            {
-                path: "*",
-                element: <NotFound />,
-            },
+            { index: true, element: <Home /> },
+            { path: "register", element: <Register /> },
+            { path: "login", element: <Login /> },
+            { path: "unauthorized", element: <Unauthorized /> },
+            { path: "tuitions", element: <Tuitions /> },
+            { path: "tuitions/:id", element: <TuitionDetails /> },
+            { path: "tutors", element: <FindTutors /> },
+            { path: "tutors/:id", element: <TutorDetails /> },
+            { path: "about", element: <About /> },
+            { path: "contact", element: <Contact /> },
+            { path: "*", element: <NotFound /> },
         ],
     },
     {
@@ -95,10 +63,8 @@ export const router = createBrowserRouter([
             </PrivateRoute>
         ),
         children: [
-            {
-                index: true,
-                element: <Dashboard />,
-            },
+            { index: true, element: <Dashboard /> },
+            // Student
             {
                 path: "student",
                 element: (
@@ -148,18 +114,18 @@ export const router = createBrowserRouter([
                 ),
             },
             {
-                path: "payment-details/:id",
-                element: (
-                    <StudentRoute>
-                        <PaymentDetails />
-                    </StudentRoute>
-                ),
-            },
-            {
                 path: "student/profile",
                 element: (
                     <StudentRoute>
                         <ProfileSettings />
+                    </StudentRoute>
+                ),
+            },
+            {
+                path: "payment-details/:id",
+                element: (
+                    <StudentRoute>
+                        <PaymentDetails />
                     </StudentRoute>
                 ),
             },
@@ -179,6 +145,7 @@ export const router = createBrowserRouter([
                     </PrivateRoute>
                 ),
             },
+            // Tutor
             {
                 path: "tutor",
                 element: (
@@ -196,21 +163,30 @@ export const router = createBrowserRouter([
                 ),
             },
             {
-                path: "/dashboard/tutor/ongoing",
+                path: "tutor/ongoing",
                 element: (
                     <TutorRoute>
                         <OngoingApplications />
                     </TutorRoute>
                 ),
-            },
+            }, // FIXED route name
             {
-                path: "/dashboard/tutor/revenue",
+                path: "tutor/revenue",
                 element: (
                     <TutorRoute>
                         <Revenue />
                     </TutorRoute>
                 ),
             },
+            {
+                path: "tutor/profile",
+                element: (
+                    <TutorRoute>
+                        <ProfileSettings />
+                    </TutorRoute>
+                ),
+            }, // NEW
+            // Admin
             {
                 path: "admin",
                 element: (
@@ -227,7 +203,6 @@ export const router = createBrowserRouter([
                     </AdminRoute>
                 ),
             },
-
             {
                 path: "admin/tuitions",
                 element: (
@@ -245,9 +220,14 @@ export const router = createBrowserRouter([
                 ),
             },
             {
-                path: "*",
-                element: <NotFound />,
-            },
+                path: "admin/profile",
+                element: (
+                    <AdminRoute>
+                        <ProfileSettings />
+                    </AdminRoute>
+                ),
+            }, // NEW
+            { path: "*", element: <NotFound /> },
         ],
     },
 ]);

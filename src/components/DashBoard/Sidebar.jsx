@@ -1,188 +1,169 @@
+/* eslint-disable indent */
 import { Link, useLocation } from "react-router";
+import {
+    LayoutDashboard,
+    PlusCircle,
+    BookOpen,
+    Bookmark,
+    Users,
+    CreditCard,
+    UserCircle,
+    Briefcase,
+    GraduationCap,
+    BarChart3,
+    ShieldCheck,
+    ListChecks,
+    Wallet,
+} from "lucide-react";
 import useAdmin from "../../hooks/useAdmin";
 import useTutor from "../../hooks/useTutor";
 import useStudent from "../../hooks/useStudent";
+
+const NavItem = ({ to, icon: Icon, label, exact = false }) => {
+    const location = useLocation();
+    const isActive = exact
+        ? location.pathname === to
+        : location.pathname.startsWith(to);
+
+    return (
+        <Link
+            to={to}
+            className={`
+                flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
+                transition-all duration-150
+                ${
+                    isActive
+                        ? "bg-cyan-600/20 text-cyan-300 border border-cyan-500/30"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+                }
+            `}
+        >
+            <Icon size={17} className="shrink-0" />
+            <span>{label}</span>
+        </Link>
+    );
+};
+
+const SectionLabel = ({ label }) => (
+    <p className="px-4 pt-5 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-600 select-none">
+        {label}
+    </p>
+);
 
 const Sidebar = () => {
     const [isAdmin] = useAdmin();
     const [isTutor] = useTutor();
     const [isStudent] = useStudent();
-    const location = useLocation();
-
-    const isActive = (path) => location.pathname === path;
 
     return (
-        <nav className="p-6 space-y-4">
+        <nav className="p-4 space-y-0.5">
             {isStudent && (
-                <div className="space-y-2">
-                    <Link
-                        to="/dashboard"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Dashboard
-                    </Link>
-
-                    <Link
+                <>
+                    <SectionLabel label="Student" />
+                    <NavItem
+                        to="/dashboard/student"
+                        icon={LayoutDashboard}
+                        label="Dashboard"
+                        exact
+                    />
+                    <NavItem
                         to="/dashboard/student/post-tuition"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/post-tuition")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Post Tuition
-                    </Link>
-
-                    <Link
+                        icon={PlusCircle}
+                        label="Post Tuition"
+                    />
+                    <NavItem
                         to="/dashboard/student/my-tuitions"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/my-tuitions")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        My Tuitions
-                    </Link>
-
-                    <Link
-                        to="/dashboard/student/saved"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/saved")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Saved Items
-                    </Link>
-
-                    <Link
+                        icon={BookOpen}
+                        label="My Tuitions"
+                    />
+                    <NavItem
                         to="/dashboard/student/applied-tutors"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/applied-tutors")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Applied Tutors
-                    </Link>
-
-                    <Link
+                        icon={Users}
+                        label="Applied Tutors"
+                    />
+                    <NavItem
+                        to="/dashboard/student/saved"
+                        icon={Bookmark}
+                        label="Saved Items"
+                    />
+                    <NavItem
                         to="/dashboard/student/payments"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/payments")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Payments
-                    </Link>
-
-                    <Link
+                        icon={CreditCard}
+                        label="Payments"
+                    />
+                    <SectionLabel label="Account" />
+                    <NavItem
                         to="/dashboard/student/profile"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/student/profile")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Profile Settings
-                    </Link>
-                </div>
+                        icon={UserCircle}
+                        label="Profile Settings"
+                    />
+                </>
             )}
 
             {isTutor && (
-                <div className="space-y-2">
-                    <Link
-                        to="/dashboard"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/tutor")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Tutor
-                    </Link>
-                    <Link
+                <>
+                    <SectionLabel label="Tutor" />
+                    <NavItem
+                        to="/dashboard/tutor"
+                        icon={LayoutDashboard}
+                        label="Dashboard"
+                        exact
+                    />
+                    <NavItem
                         to="/dashboard/tutor/applications"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/tutor/applications")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Applications
-                    </Link>
-                    <Link
+                        icon={Briefcase}
+                        label="My Applications"
+                    />
+                    <NavItem
                         to="/dashboard/tutor/ongoing"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/tutor/ongoing")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Ongoing Sessions
-                    </Link>
-                    <Link
+                        icon={GraduationCap}
+                        label="Ongoing Sessions"
+                    />
+                    <NavItem
                         to="/dashboard/tutor/revenue"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/tutor/revenue")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Revenue
-                    </Link>
-                </div>
+                        icon={Wallet}
+                        label="Revenue"
+                    />
+                    <SectionLabel label="Account" />
+                    <NavItem
+                        to="/dashboard/tutor/profile"
+                        icon={UserCircle}
+                        label="Profile Settings"
+                    />
+                </>
             )}
 
             {isAdmin && (
-                <div className="space-y-2">
-                    <Link
+                <>
+                    <SectionLabel label="Admin" />
+                    <NavItem
                         to="/dashboard/admin"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/admin")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Admin
-                    </Link>
-                    <Link
+                        icon={ShieldCheck}
+                        label="Dashboard"
+                        exact
+                    />
+                    <NavItem
                         to="/dashboard/admin/users"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/admin/users")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        User Management
-                    </Link>
-
-                    <Link
+                        icon={Users}
+                        label="User Management"
+                    />
+                    <NavItem
                         to="/dashboard/admin/tuitions"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/admin/tuitions")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Tuition Management
-                    </Link>
-                    <Link
+                        icon={ListChecks}
+                        label="Tuition Management"
+                    />
+                    <NavItem
                         to="/dashboard/admin/analytics"
-                        className={`block px-4 py-2 rounded ${
-                            isActive("/dashboard/admin/analytics")
-                                ? "bg-cyan-600"
-                                : "hover:bg-slate-800"
-                        }`}
-                    >
-                        Analytics
-                    </Link>
-                </div>
+                        icon={BarChart3}
+                        label="Analytics"
+                    />
+                    <SectionLabel label="Account" />
+                    <NavItem
+                        to="/dashboard/admin/profile"
+                        icon={UserCircle}
+                        label="Profile Settings"
+                    />
+                </>
             )}
         </nav>
     );
