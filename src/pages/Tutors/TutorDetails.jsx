@@ -1,5 +1,5 @@
+/* eslint-disable indent */
 import { Link, useNavigate, useParams } from "react-router";
-import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     Mail,
@@ -38,16 +38,33 @@ const TutorDetails = () => {
         },
     });
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    }
-
     const { data: savedBookmarks = { tutors: [] } } = useQuery({
         queryKey: ["saved-bookmarks", user?.email],
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
         initialData: { tutors: [], tuitions: [] },
     });
+
+    const handleHireTutor = () => {
+        if (!user?.email) {
+            toast("Please log in to hire this tutor", { duration: 3000 });
+            navigate("/login");
+            return;
+        }
+
+        if (!isStudent) {
+            toast.error("Only students can hire tutors.");
+            return;
+        }
+
+        navigate("/dashboard/student/post-tuition", {
+            state: { tutorId: tutor?._id, tutorName: tutor?.name },
+        });
+    };
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
     const isSaved =
         user?.email && tutor
@@ -142,7 +159,12 @@ const TutorDetails = () => {
                             </div>
 
                             <div className="mt-6 flex flex-wrap gap-3">
-                                <button className="btn btn-primary rounded-full">
+                                <button
+                                    type="button"
+                                    onClick={handleHireTutor}
+                                    className="btn btn-primary rounded-full"
+                                    disabled={!user?.email || !isStudent}
+                                >
                                     Hire This Tutor
                                 </button>
                                 {isStudent && (
