@@ -15,25 +15,12 @@ const ApplyModal = ({ tuition, openModal, setOpenModal, onApplied }) => {
         try {
             const application = {
                 tuitionId: tuition._id,
-
                 studentEmail: tuition.studentEmail,
-                studentName: tuition.studentName,
-
-                tuitionSubject: tuition.subject,
-                tuitionClass: tuition.classLevel,
-                tuitionBudget: tuition.budget,
-                tuitionLocation: tuition.location,
-
-                tutorName: user.displayName,
                 tutorEmail: user.email,
-                tutorPhoto: user.photoURL,
-
                 qualifications: data.qualifications,
                 experience: Number(data.experience),
                 expectedSalary: Number(data.expectedSalary),
-
                 status: "pending",
-
                 appliedAt: new Date(),
             };
 

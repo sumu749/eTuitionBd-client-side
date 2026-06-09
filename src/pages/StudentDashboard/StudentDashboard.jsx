@@ -1,7 +1,59 @@
 import { BookOpen, ClipboardList, Users } from "lucide-react";
 import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
+import api from "../../api/api";
+import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 
 const StudentDashboard = () => {
+    const { user, loading: authLoading } = useAuth();
+
+    const { data: tuitions = [], isLoading: tuitionsLoading } = useQuery({
+        queryKey: ["my-tuitions", user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await api.get(`/my-tuitions/${user.email}`);
+            return res.data;
+        },
+    });
+
+    const { data: applications = [], isLoading: applicationsLoading } =
+        useQuery({
+            queryKey: ["student-applications", user?.email],
+            enabled: !!user?.email,
+            queryFn: async () => {
+                const res = await api.get(`/applications/${user.email}`);
+                return res.data;
+            },
+        });
+
+    const { data: payments = [], isLoading: paymentsLoading } = useQuery({
+        queryKey: ["student-payments", user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await api.get("/payments", {
+                params: { email: user.email },
+            });
+            return res.data;
+        },
+    });
+
+    const isLoading =
+        authLoading ||
+        tuitionsLoading ||
+        applicationsLoading ||
+        paymentsLoading;
+
+    const activeRequests = tuitions.length;
+    const applicationsReceived = applications.length;
+    const completedLessons = payments.filter(
+        (payment) => payment.status === "completed",
+    ).length;
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
+
     return (
         <div className="space-y-8">
             <div className="rounded-4xl border border-slate-800 bg-slate-900/70 p-8 shadow-2xl shadow-slate-950/20">
@@ -51,7 +103,7 @@ const StudentDashboard = () => {
                                 Active requests
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
-                                12
+                                {activeRequests}
                             </p>
                         </div>
                         <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-cyan-600/15 text-cyan-300">
@@ -71,7 +123,7 @@ const StudentDashboard = () => {
                                 Applications received
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
-                                37
+                                {applicationsReceived}
                             </p>
                         </div>
                         <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-fuchsia-500/15 text-fuchsia-300">
@@ -91,7 +143,7 @@ const StudentDashboard = () => {
                                 Completed lessons
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
-                                8
+                                {completedLessons}
                             </p>
                         </div>
                         <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-500/15 text-emerald-300">
