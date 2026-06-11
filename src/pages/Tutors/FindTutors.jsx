@@ -59,7 +59,8 @@ const FindTutors = () => {
         return () => (mounted = false);
     }, [user]);
 
-    const savedTutorIds = savedBookmarks?.tutors?.map((bookmark) => bookmark.id) || [];
+    const savedTutorIds =
+        savedBookmarks?.tutors?.map((bookmark) => bookmark.id) || [];
     const bookmarkedTutorIds = new Set([
         ...savedTutorIds,
         ...optimisticBookmarks,
@@ -145,7 +146,9 @@ const FindTutors = () => {
                             onViewDetails={(t) =>
                                 navigate(`/tutors/${t._id || t.id || ""}`)
                             }
-                            onMyProfile={() => navigate("/dashboard/tutor")}
+                            onMyProfile={() =>
+                                navigate("/dashboard/tutor/profile")
+                            }
                             onViewProfile={(t) =>
                                 navigate(`/tutors/${t._id || t.id || ""}`)
                             }
