@@ -116,9 +116,18 @@ const TutorDetails = () => {
                 <div className="bg-slate-900 border border-slate-800 rounded-4xl p-8">
                     <div className="flex flex-col lg:flex-row gap-8 items-center">
                         <img
-                            src={tutor.photoURL}
+                            src={
+                                tutor.photoURL ||
+                                "https://i.pravatar.cc/300?img=65"
+                            }
                             alt={tutor.name}
                             className="w-44 h-44 rounded-full object-cover border-4 border-cyan-500"
+                            loading="lazy"
+                            onError={(event) => {
+                                event.currentTarget.onerror = null;
+                                event.currentTarget.src =
+                                    "https://i.pravatar.cc/300?img=65";
+                            }}
                         />
 
                         <div className="flex-1">

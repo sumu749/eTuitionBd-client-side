@@ -34,6 +34,9 @@ import Checkout from "../pages/Checkout/Checkout";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import PaymentDetails from "../pages/StudentDashboard/PaymentDetails";
 import TutorDetails from "../pages/Tutors/TutorDetails";
+import Blog from "../pages/Blog/Blog";
+import Privacy from "../pages/Privacy/Privacy";
+import Terms from "../pages/Terms/Terms";
 // Shared profile — works for student, tutor, and admin
 import ProfileSettings from "../pages/SharedProfile/ProfileSettings";
 
@@ -51,6 +54,9 @@ export const router = createBrowserRouter([
             { path: "tutors", element: <FindTutors /> },
             { path: "tutors/:id", element: <TutorDetails /> },
             { path: "about", element: <About /> },
+            { path: "blog", element: <Blog /> },
+            { path: "privacy", element: <Privacy /> },
+            { path: "terms", element: <Terms /> },
             { path: "contact", element: <Contact /> },
             { path: "*", element: <NotFound /> },
         ],

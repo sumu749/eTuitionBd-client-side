@@ -1,18 +1,19 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import TutorCard from "../Tutor/TutorCard";
 import { getSavedBookmarks, toggleBookmark } from "../../utils/bookmarkUtils";
 import useAuth from "../../hooks/useAuth";
+import useRole from "../../hooks/useRole";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 const FeaturedTutors = () => {
-    const [userRole, setUserRole] = useState(null);
     const [optimisticBookmarks, setOptimisticBookmarks] = useState(new Set());
     const { user } = useAuth();
+    const { role: userRole } = useRole();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -42,37 +43,6 @@ const FeaturedTutors = () => {
                 .slice(0, 4);
         },
     });
-
-    useEffect(() => {
-        if (!user) {
-            setUserRole(null);
-            return;
-        }
-
-        let mounted = true;
-
-        const fetchRole = async () => {
-            const roleRes = await api.get(
-                `/users/role/${encodeURIComponent(user.email)}`,
-            );
-
-            if (mounted) {
-                setUserRole(roleRes?.data?.role || null);
-            }
-        };
-
-        fetchRole();
-
-        return () => {
-            mounted = false;
-        };
-    }, [user]);
-
-    useEffect(() => {
-        if (!user?.email) {
-            setUserRole(null);
-        }
-    }, [user?.email]);
 
     const savedTutorIds =
         bookmarkedTutors?.map((bookmark) => bookmark.id) || [];

@@ -40,12 +40,20 @@ const AuthProvider = ({ children }) => {
         return signOut(auth);
     };
 
-    const updateUserProfile = (name, photo) => {
+    const updateUserProfile = async (name, photo) => {
         setLoading(true);
-        return updateProfile(auth.currentUser, {
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error("No authenticated user available");
+        }
+
+        await updateProfile(user, {
             displayName: name,
             photoURL: photo,
         });
+
+        setUser(auth.currentUser);
+        return auth.currentUser;
     };
 
     useEffect(() => {

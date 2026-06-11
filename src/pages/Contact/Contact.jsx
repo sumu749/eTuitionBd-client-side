@@ -57,34 +57,65 @@ const Contact = () => {
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-                    <input
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="Your name"
-                        className="input w-full bg-slate-900 border-slate-700 text-slate-100"
-                    />
+                    <div>
+                        <label
+                            htmlFor="contact-name"
+                            className="block text-sm font-medium text-slate-300"
+                        >
+                            Full Name
+                        </label>
+                        <input
+                            id="contact-name"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            placeholder="Your name"
+                            className="input w-full bg-slate-900 border-slate-700 text-slate-100"
+                            aria-required="true"
+                        />
+                    </div>
 
-                    <input
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="Email address"
-                        className="input w-full bg-slate-900 border-slate-700 text-slate-100"
-                    />
+                    <div>
+                        <label
+                            htmlFor="contact-email"
+                            className="block text-sm font-medium text-slate-300"
+                        >
+                            Email Address
+                        </label>
+                        <input
+                            id="contact-email"
+                            name="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="Email address"
+                            className="input w-full bg-slate-900 border-slate-700 text-slate-100"
+                            aria-required="true"
+                        />
+                    </div>
 
-                    <textarea
-                        name="message"
-                        value={form.message}
-                        onChange={handleChange}
-                        placeholder="How can we help?"
-                        className="textarea w-full bg-slate-900 border-slate-700 text-slate-100"
-                    />
+                    <div>
+                        <label
+                            htmlFor="contact-message"
+                            className="block text-sm font-medium text-slate-300"
+                        >
+                            Message
+                        </label>
+                        <textarea
+                            id="contact-message"
+                            name="message"
+                            value={form.message}
+                            onChange={handleChange}
+                            placeholder="How can we help?"
+                            className="textarea w-full bg-slate-900 border-slate-700 text-slate-100"
+                            rows={6}
+                            aria-required="true"
+                        />
+                    </div>
 
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="btn btn-primary rounded-full"
+                        className="btn btn-primary rounded-full w-full"
                     >
                         {isSubmitting ? "Sending..." : "Send Message"}
                     </button>

@@ -49,12 +49,16 @@ const Footer = () => {
                                 <NavLink to="/tutors">Find Tutors</NavLink>
                             </li>
                             <li>
-                                <NavLink to="/dashboard/student/post-tuition">
-                                    Post Tuition
+                                <NavLink to="/tuitions">
+                                    Explore Tuitions
                                 </NavLink>
                             </li>
-                            <li>Become Tutor</li>
-                            <li>Pricing</li>
+                            <li>
+                                <NavLink to="/register">Become a Tutor</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/blog">Blog</NavLink>
+                            </li>
                         </ul>
                     </div>
 
@@ -62,17 +66,25 @@ const Footer = () => {
                         <h3 className="font-semibold text-lg">Company</h3>
 
                         <ul className="space-y-3 mt-4">
-                            <li>About</li>
-                            <li>Contact</li>
-                            <li>Careers</li>
-                            <li>Blog</li>
+                            <li>
+                                <NavLink to="/about">About</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/contact">Contact</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/privacy">Privacy Policy</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/terms">Terms</NavLink>
+                            </li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="font-semibold text-lg">Stay Updated</h3>
 
-                        <p className="mt-4 text-sm">
+                        <p className="mt-4 text-sm text-slate-400">
                             Get updates on new tutors and tuition opportunities.
                         </p>
 
@@ -80,7 +92,8 @@ const Footer = () => {
                             <input
                                 type="email"
                                 placeholder="Email"
-                                className="input input-bordered flex-1"
+                                aria-label="Subscribe to newsletter"
+                                className="input input-bordered flex-1 bg-slate-900 border-slate-700 text-slate-100"
                             />
 
                             <button className="btn btn-primary">Join</button>

@@ -7,6 +7,7 @@ import useAuth from "../../hooks/useAuth";
 const ProfileSettings = () => {
     const { user, updateUserProfile } = useAuth();
     const [loading, setLoading] = useState(false);
+    const defaultAvatar = "https://i.pravatar.cc/300?img=65";
 
     const {
         register,
@@ -72,6 +73,14 @@ const ProfileSettings = () => {
                                         <img
                                             src={user.photoURL}
                                             alt="Profile"
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                            onError={(event) => {
+                                                event.currentTarget.onerror =
+                                                    null;
+                                                event.currentTarget.src =
+                                                    defaultAvatar;
+                                            }}
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-cyan-300">

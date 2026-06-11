@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable indent */
 import { Link } from "react-router";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import {
     Award,
@@ -127,9 +126,6 @@ const TutorDashboard = () => {
             (await api.get(`/users/${encodeURIComponent(user.email)}`)).data,
     });
 
-    if (appLoading || ongoingLoading || revenueLoading)
-        return <LoadingSpinner />;
-
     const pending = applications.filter((a) => a.status === "pending");
     const approved = applications.filter((a) => a.status === "approved");
     const rejected = applications.filter((a) => a.status === "rejected");
@@ -173,44 +169,45 @@ const TutorDashboard = () => {
         [applications],
     );
 
-    const tuitionQueries = useMemo(
-        () =>
-            recentApplications.map((app) => ({
-                queryKey: ["tuition", app.tuitionId],
-                queryFn: async () => {
-                    const res = await api.get(`/tuitions/${app.tuitionId}`);
-                    return res.data;
-                },
-                enabled: !!app.tuitionId && !app.tuitionSubject,
-                staleTime: 1000 * 60 * 5,
-                retry: false,
-            })),
-        [recentApplications],
+    const recentTuitionQueries = useQueries(
+        recentApplications.map((application) => ({
+            queryKey: ["tuition", application.tuitionId],
+            queryFn: async () => {
+                const res = await api.get(`/tuitions/${application.tuitionId}`);
+                return res.data;
+            },
+            enabled: !!application.tuitionId && !application.tuitionSubject,
+            staleTime: 1000 * 60 * 5,
+            retry: false,
+        })),
     );
 
-    const recentTuitionQueries = useQueries({ queries: tuitionQueries });
-
     const recentApplicationsEnriched = useMemo(() => {
-        // Map queries to tuition data by matching index
-        const tuitionDataMap = {};
-        recentApplications.forEach((app, index) => {
-            const query = recentTuitionQueries[index];
-            if (query?.data && app.tuitionId) {
-                tuitionDataMap[app.tuitionId] = query.data;
-            }
-        });
-
-        return recentApplications.map((app) => {
-            const tuitionDetails = tuitionDataMap[app.tuitionId];
+        return recentApplications.map((app, index) => {
+            const tuitionDetails = recentTuitionQueries[index]?.data;
             return {
                 ...app,
+                studentEmail: app.studentEmail || app.student?.email || "—",
                 tuitionSubject:
-                    app.tuitionSubject || tuitionDetails?.subject || "N/A",
+                    app.tuitionSubject ||
+                    tuitionDetails?.subject ||
+                    app.subject ||
+                    "N/A",
                 expectedSalary:
-                    app.expectedSalary ?? tuitionDetails?.budget ?? 0,
+                    app.expectedSalary !== undefined &&
+                    app.expectedSalary !== null
+                        ? Number(app.expectedSalary)
+                        : (tuitionDetails?.budget ?? 0),
+                status: app.status || "pending",
+                appliedAt:
+                    app.appliedAt || app.createdAt || app.appliedAtDate || null,
             };
         });
     }, [recentApplications, recentTuitionQueries]);
+
+    // Return loading spinner only after all hooks are declared
+    if (appLoading || ongoingLoading || revenueLoading)
+        return <LoadingSpinner />;
 
     return (
         <div className="space-y-8">

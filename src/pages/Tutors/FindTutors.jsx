@@ -1,19 +1,19 @@
-/* eslint-disable indent */
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
+import useRole from "../../hooks/useRole";
 import { useNavigate } from "react-router";
 import { getSavedBookmarks, toggleBookmark } from "../../utils/bookmarkUtils";
 import TutorCard from "../../components/Tutor/TutorCard";
 
 const FindTutors = () => {
     const [tutors, setTutors] = useState([]);
-    const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
     const [optimisticBookmarks, setOptimisticBookmarks] = useState(new Set());
     const { user } = useAuth();
+    const { role: userRole } = useRole();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -31,23 +31,14 @@ const FindTutors = () => {
 
         const load = async () => {
             try {
-                const [tRes, roleRes] = await Promise.all([
-                    api.get("/public-tutors"),
-                    user?.email
-                        ? api.get(
-                              `/users/role/${encodeURIComponent(user.email)}`,
-                          )
-                        : Promise.resolve({ data: {} }),
-                ]);
+                const tRes = await api.get("/public-tutors");
 
                 if (mounted) {
                     setTutors(tRes.data || []);
-                    setUserRole(roleRes?.data?.role || null);
                 }
             } catch {
                 if (mounted) {
                     setTutors([]);
-                    setUserRole(null);
                 }
             } finally {
                 if (mounted) setLoading(false);

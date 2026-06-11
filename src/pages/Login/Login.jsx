@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import { Mail, Lock } from "lucide-react";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
 import api from "../../api/api";
 import toast from "react-hot-toast";
@@ -11,6 +12,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const { loginUser, googleLogin } = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const loginEmail = async (user) => {
         // Firebase token
@@ -39,6 +41,7 @@ const Login = () => {
             );
 
             const role = res.data.role;
+            queryClient.setQueryData(["user-role", email], role);
 
             if (role === "student") {
                 navigate("/dashboard/student");
@@ -146,7 +149,12 @@ const Login = () => {
                         onSubmit={handleEmailLogin}
                     >
                         <div>
-                            <label className="text-slate-300">Email</label>
+                            <label
+                                htmlFor="login-email"
+                                className="text-slate-300 block text-sm font-medium"
+                            >
+                                Email Address
+                            </label>
 
                             <div className="mt-2 relative">
                                 <Mail
@@ -155,6 +163,7 @@ const Login = () => {
                                 />
 
                                 <input
+                                    id="login-email"
                                     type="email"
                                     placeholder="Enter email"
                                     value={email}
@@ -168,12 +177,18 @@ const Login = () => {
                                     text-slate-100
                                     placeholder:text-slate-500
                                     "
+                                    aria-required="true"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-slate-300">Password</label>
+                            <label
+                                htmlFor="login-password"
+                                className="text-slate-300 block text-sm font-medium"
+                            >
+                                Password
+                            </label>
 
                             <div className="mt-2 relative">
                                 <Lock
@@ -182,6 +197,7 @@ const Login = () => {
                                 />
 
                                 <input
+                                    id="login-password"
                                     type="password"
                                     placeholder="Enter password"
                                     value={password}
@@ -197,6 +213,7 @@ const Login = () => {
                                     text-slate-100
                                     placeholder:text-slate-500
                                     "
+                                    aria-required="true"
                                 />
                             </div>
                         </div>

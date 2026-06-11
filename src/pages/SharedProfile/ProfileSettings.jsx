@@ -38,6 +38,7 @@ const ProfileSettings = () => {
     const { role } = useRole();
     const [saving, setSaving] = useState(false);
     const [dbProfile, setDbProfile] = useState(null);
+    const defaultAvatar = "https://i.pravatar.cc/300?img=65";
 
     const {
         register,
@@ -144,6 +145,12 @@ const ProfileSettings = () => {
                                         src={user.photoURL}
                                         alt="avatar"
                                         className="h-full w-full object-cover"
+                                        loading="lazy"
+                                        onError={(event) => {
+                                            event.currentTarget.onerror = null;
+                                            event.currentTarget.src =
+                                                defaultAvatar;
+                                        }}
                                     />
                                 ) : (
                                     <User size={32} className="text-cyan-300" />

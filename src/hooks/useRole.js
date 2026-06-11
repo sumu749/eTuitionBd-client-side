@@ -9,6 +9,10 @@ const useRole = () => {
         queryKey: ["user-role", user?.email],
         enabled: !!user?.email,
         staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
         queryFn: async () => {
             const res = await api.get(
                 `/users/role/${encodeURIComponent(user.email)}`,

@@ -80,4 +80,16 @@ eTuitionBd is a React + Vite based tutor and tuition marketplace web application
     npm run build
     ```
 
+## Demo Credentials
+
+### Student Account
+
+- **Email:** hablu@gmail.com
+- **Password:** Hablu@749
+
+### Admin Account
+
+- **Email:** admin749@gmail.com
+- **Password:** @@Admin749@@
+
 ---

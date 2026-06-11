@@ -2,15 +2,15 @@
 @plugin "daisyui";
 
 :root {
-    color-scheme: dark;
-    --app-bg: #020617;
-    --app-surface: rgba(15, 23, 42, 0.92);
-    --app-surface-soft: rgba(15, 23, 42, 0.77);
-    --app-text: #e2e8f0;
-    --app-muted: #94a3b8;
+    color-scheme: light;
+    --app-bg: #f8fafc;
+    --app-surface: rgba(255, 255, 255, 0.92);
+    --app-surface-soft: rgba(248, 250, 252, 0.77);
+    --app-text: #0f172a;
+    --app-muted: #64748b;
     --app-primary: #38bdf8;
-    --app-secondary: #c084fc;
-    --app-accent: #22d3ee;
+    --app-secondary: #8b5cf6;
+    --app-accent: #0ea5e9;
     --app-border: rgba(148, 163, 184, 0.2);
 }
 
@@ -18,10 +18,13 @@ html {
     min-height: 100%;
     background: radial-gradient(
         circle at top,
-        #0f172a 0%,
-        #020617 40%,
-        #020617 100%
+        #e2e8f0 0%,
+        #f8fafc 40%,
+        #f8fafc 100%
     );
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
 body {
@@ -36,16 +39,51 @@ body {
         sans-serif;
     background: radial-gradient(
         circle at top,
-        #0f172a 0%,
-        #020617 38%,
-        #020617 100%
+        #e2e8f0 0%,
+        #f8fafc 38%,
+        #f8fafc 100%
     );
     color: var(--app-text);
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
 body::selection {
     background: rgba(56, 189, 248, 0.22);
     color: white;
+}
+
+.dark {
+    color-scheme: dark;
+    --app-bg: #020617;
+    --app-surface: rgba(15, 23, 42, 0.92);
+    --app-surface-soft: rgba(15, 23, 42, 0.77);
+    --app-text: #e2e8f0;
+    --app-muted: #94a3b8;
+    --app-primary: #38bdf8;
+    --app-secondary: #c084fc;
+    --app-accent: #22d3ee;
+    --app-border: rgba(148, 163, 184, 0.2);
+}
+
+.dark html {
+    background: radial-gradient(
+        circle at top,
+        #0f172a 0%,
+        #020617 40%,
+        #020617 100%
+    );
+}
+
+.dark body {
+    background: radial-gradient(
+        circle at top,
+        #0f172a 0%,
+        #020617 38%,
+        #020617 100%
+    );
+    color: var(--app-text);
 }
 
 .btn-primary {
@@ -63,23 +101,23 @@ body::selection {
 }
 
 .bg-base-100 {
-    background-color: rgba(15, 23, 42, 0.95) !important;
+    background-color: var(--app-surface) !important;
 }
 
 .bg-neutral {
-    background-color: rgba(15, 23, 42, 0.95) !important;
+    background-color: var(--app-surface) !important;
 }
 
 .text-neutral-content {
-    color: #cbd5e1 !important;
+    color: var(--app-text) !important;
 }
 
 .border-base-200 {
-    border-color: rgba(148, 163, 184, 0.2) !important;
+    border-color: var(--app-border) !important;
 }
 
 .card,
 .card-body {
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--app-surface) !important;
     color: var(--app-text);
 }
