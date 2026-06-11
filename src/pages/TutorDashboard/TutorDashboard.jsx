@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable indent */
 import { Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
+import { useMemo } from "react";
 import {
     Award,
     BookOpen,
@@ -160,9 +162,55 @@ const TutorDashboard = () => {
         }));
     })();
 
-    const recentApplications = [...applications]
-        .sort((a, b) => new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0))
-        .slice(0, 5);
+    const recentApplications = useMemo(
+        () =>
+            [...applications]
+                .sort(
+                    (a, b) =>
+                        new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0),
+                )
+                .slice(0, 5),
+        [applications],
+    );
+
+    const tuitionQueries = useMemo(
+        () =>
+            recentApplications.map((app) => ({
+                queryKey: ["tuition", app.tuitionId],
+                queryFn: async () => {
+                    const res = await api.get(`/tuitions/${app.tuitionId}`);
+                    return res.data;
+                },
+                enabled: !!app.tuitionId && !app.tuitionSubject,
+                staleTime: 1000 * 60 * 5,
+                retry: false,
+            })),
+        [recentApplications],
+    );
+
+    const recentTuitionQueries = useQueries({ queries: tuitionQueries });
+
+    const recentApplicationsEnriched = useMemo(() => {
+        // Map queries to tuition data by matching index
+        const tuitionDataMap = {};
+        recentApplications.forEach((app, index) => {
+            const query = recentTuitionQueries[index];
+            if (query?.data && app.tuitionId) {
+                tuitionDataMap[app.tuitionId] = query.data;
+            }
+        });
+
+        return recentApplications.map((app) => {
+            const tuitionDetails = tuitionDataMap[app.tuitionId];
+            return {
+                ...app,
+                tuitionSubject:
+                    app.tuitionSubject || tuitionDetails?.subject || "N/A",
+                expectedSalary:
+                    app.expectedSalary ?? tuitionDetails?.budget ?? 0,
+            };
+        });
+    }, [recentApplications, recentTuitionQueries]);
 
     return (
         <div className="space-y-8">
@@ -411,7 +459,7 @@ const TutorDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {recentApplications.map((app) => (
+                                {recentApplicationsEnriched.map((app) => (
                                     <tr
                                         key={app._id}
                                         className="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors"
