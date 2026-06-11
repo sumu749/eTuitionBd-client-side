@@ -1,8 +1,8 @@
 /* eslint-disable indent */
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { Briefcase, CalendarDays, Users, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -13,7 +13,7 @@ const MyApplications = () => {
     const [selectedApplication, setSelectedApplication] = useState(null);
 
     const {
-        data = [],
+        data,
         isLoading,
         isError,
         error,
@@ -31,6 +31,62 @@ const MyApplications = () => {
             return res.data;
         },
     });
+
+    const applications = useMemo(
+        () => (Array.isArray(data) ? data : []),
+        [data],
+    );
+
+    const tuitionQueryOptions = useMemo(
+        () =>
+            applications.map((application) => ({
+                queryKey: ["tuition", application.tuitionId],
+                queryFn: async () => {
+                    const res = await api.get(`/tuitions/${application.tuitionId}`);
+                    return res.data;
+                },
+                enabled:
+                    !!application.tuitionId &&
+                    !application.tuitionSubject &&
+                    !application.tuitionClass &&
+                    !application.tuitionBudget,
+                staleTime: 1000 * 60 * 5,
+                retry: false,
+            })),
+        [applications],
+    );
+
+    const tuitionQueries = useQueries({ queries: tuitionQueryOptions });
+
+    const enrichedApplications = useMemo(
+        () =>
+            Array.isArray(applications)
+                ? applications.map((application, index) => {
+                      const tuitionDetails = tuitionQueries[index]?.data;
+
+                      return {
+                          ...application,
+                          tuitionSubject:
+                              application.tuitionSubject ||
+                              tuitionDetails?.subject ||
+                              "N/A",
+                          tuitionClass:
+                              application.tuitionClass ||
+                              tuitionDetails?.classLevel ||
+                              "N/A",
+                          tuitionBudget:
+                              application.tuitionBudget ??
+                              tuitionDetails?.budget ??
+                              0,
+                          tuitionLocation:
+                              application.tuitionLocation ||
+                              tuitionDetails?.location ||
+                              "N/A",
+                      };
+                  })
+                : [],
+        [applications, tuitionQueries],
+    );
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -135,7 +191,7 @@ const MyApplications = () => {
                                 Total applications
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
-                                {data.length}
+                                {applications.length}
                             </p>
                         </div>
                         <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-cyan-600/15 text-cyan-300">
@@ -155,7 +211,7 @@ const MyApplications = () => {
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
                                 {
-                                    data.filter(
+                                    applications.filter(
                                         (item) => item.status === "pending",
                                     ).length
                                 }
@@ -178,7 +234,7 @@ const MyApplications = () => {
                             </p>
                             <p className="mt-4 text-3xl font-semibold text-white">
                                 {
-                                    data.filter(
+                                    applications.filter(
                                         (item) => item.status === "approved",
                                     ).length
                                 }
@@ -194,7 +250,7 @@ const MyApplications = () => {
                 </article>
             </div>
 
-            {data.length === 0 ? (
+            {applications.length === 0 ? (
                 <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-10 text-center">
                     <h2 className="text-2xl font-semibold text-white">
                         No applications found
@@ -220,7 +276,7 @@ const MyApplications = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((application) => {
+                            {enrichedApplications.map((application) => {
                                 const statusClass =
                                     application.status === "approved"
                                         ? "badge badge-success"

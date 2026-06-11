@@ -15,6 +15,10 @@ const ApplyModal = ({ tuition, openModal, setOpenModal, onApplied }) => {
         try {
             const application = {
                 tuitionId: tuition._id,
+                tuitionSubject: tuition.subject,
+                tuitionClass: tuition.classLevel,
+                tuitionBudget: tuition.budget,
+                tuitionLocation: tuition.location,
                 studentEmail: tuition.studentEmail,
                 tutorEmail: user.email,
                 qualifications: data.qualifications,
