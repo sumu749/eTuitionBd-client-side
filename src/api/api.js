@@ -5,7 +5,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    if (config.url === "/jwt") {
+    if (config.url === "/jwt" || config.url === "/refresh-token") {
         return config;
     }
 
