@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { Link, useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,10 +33,7 @@ const TuitionDetails = () => {
         },
     });
 
-    const {
-        data: savedBookmarks = { tutors: [], tuitions: [] },
-        isLoading: bookmarksLoading,
-    } = useQuery({
+    const { data: savedBookmarks = { tutors: [], tuitions: [] } } = useQuery({
         queryKey: ["saved-bookmarks", user?.email],
         enabled: !!user?.email,
         queryFn: async () => getSavedBookmarks(user.email),
@@ -57,15 +55,26 @@ const TuitionDetails = () => {
         queryKey: ["already-applied", id, user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await api.get(`/applications/${user.email}`);
+            const email = encodeURIComponent(user.email);
+            const res = await api.get(`/tutor-applications/${email}`);
             const applications = res.data || [];
             return applications.find(
-                (application) => application.tuitionId === id,
+                (application) => String(application.tuitionId) === String(id),
             );
         },
     });
 
     const isApplicationSubmitted = hasApplied || !!alreadyApplied;
+
+    const handleApplicationSuccess = async () => {
+        setHasApplied(true);
+
+        if (user?.email) {
+            await queryClient.invalidateQueries({
+                queryKey: ["already-applied", id, user.email],
+            });
+        }
+    };
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -144,7 +153,9 @@ const TuitionDetails = () => {
                                             }
 
                                             // Optimistic update
-                                            setIsSavedOptimistic((prev) => !prev);
+                                            setIsSavedOptimistic(
+                                                (prev) => !prev,
+                                            );
 
                                             try {
                                                 const saved =
@@ -153,13 +164,15 @@ const TuitionDetails = () => {
                                                         tuition,
                                                         user.email,
                                                     );
-                                                await queryClient.refetchQueries({
-                                                    queryKey: [
-                                                        "saved-bookmarks",
-                                                        user.email,
-                                                    ],
-                                                    type: "all",
-                                                });
+                                                await queryClient.refetchQueries(
+                                                    {
+                                                        queryKey: [
+                                                            "saved-bookmarks",
+                                                            user.email,
+                                                        ],
+                                                        type: "all",
+                                                    },
+                                                );
                                                 // Clear optimistic state after server confirmation
                                                 setIsSavedOptimistic(false);
                                                 toast.success(
@@ -221,7 +234,7 @@ const TuitionDetails = () => {
                 tuition={tuition}
                 openModal={openModal}
                 setOpenModal={setOpenModal}
-                onApplied={() => setHasApplied(true)}
+                onApplied={handleApplicationSuccess}
             />
         </section>
     );
