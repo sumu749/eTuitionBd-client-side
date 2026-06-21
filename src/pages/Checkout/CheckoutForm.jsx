@@ -99,7 +99,7 @@ const CheckoutForm = ({ application }) => {
                     paymentDate: new Date(),
                 };
 
-                await api.post("/transactions", transactionData);
+                await api.post("/payments/transactions", transactionData);
 
                 toast.success("Payment Successful");
 

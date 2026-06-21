@@ -62,19 +62,45 @@ eTuitionBd is a React + Vite based tutor and tuition marketplace web application
 
 ## Getting Started
 
-1. Install dependencies:
+1. Create a `.env` file at the project root with your Firebase and Stripe values:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2. Add the required environment variables to `.env`:
+
+    ```env
+    VITE_API_KEY=your_firebase_api_key
+    VITE_AUTH_DOMAIN=your_firebase_auth_domain
+    VITE_PROJECT_ID=your_firebase_project_id
+    VITE_STORAGE_BUCKET=your_firebase_storage_bucket
+    VITE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+    VITE_APP_ID=your_firebase_app_id
+    VITE_API_URL=https://your-api-base-url
+    VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+    VITE_CONTACT_ENDPOINT=/contacts
+    ```
+
+3. Install dependencies:
 
     ```bash
     npm install
     ```
 
-2. Start development server:
+4. Start the development server:
 
     ```bash
     npm run dev
     ```
 
-3. Build for production:
+5. Preview the production build locally:
+
+    ```bash
+    npm run preview
+    ```
+
+6. Build for production:
 
     ```bash
     npm run build

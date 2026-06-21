@@ -17,7 +17,7 @@ const Payments = () => {
         queryKey: ["student-payments", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await api.get("/payments", {
+            const res = await api.get("/payments/payments", {
                 params: {
                     email: user.email,
                 },

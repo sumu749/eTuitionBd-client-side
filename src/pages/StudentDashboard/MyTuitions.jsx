@@ -21,7 +21,7 @@ const MyTuitions = () => {
         queryKey: ["my-tuitions", user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await api.get(`/my-tuitions/${user.email}`);
+            const res = await api.get(`/tuitions/my-tuitions/${user.email}`);
             return res.data;
         },
     });

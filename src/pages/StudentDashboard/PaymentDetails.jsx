@@ -9,7 +9,7 @@ const PaymentDetails = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["payment-details", id],
         queryFn: async () => {
-            const res = await api.get(`/transactions/${id}`);
+            const res = await api.get(`/payments/transactions/${id}`);
             return res.data;
         },
     });

@@ -15,15 +15,10 @@ const NavBar = () => {
     const [isAdmin] = useAdmin();
     const [theme, setTheme] = useState(() => {
         if (typeof window === "undefined") {
-            return "light";
+            return "dark";
         }
         const savedTheme = localStorage.getItem("theme");
-        return (
-            savedTheme ||
-            (window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light")
-        );
+        return savedTheme || "dark";
     });
     const navigate = useNavigate();
     const defaultAvatar = "https://i.pravatar.cc/300?img=65";

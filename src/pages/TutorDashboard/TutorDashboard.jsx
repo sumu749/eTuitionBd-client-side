@@ -169,8 +169,8 @@ const TutorDashboard = () => {
         [applications],
     );
 
-    const recentTuitionQueries = useQueries(
-        recentApplications.map((application) => ({
+    const recentTuitionQueries = useQueries({
+        queries: recentApplications.map((application) => ({
             queryKey: ["tuition", application.tuitionId],
             queryFn: async () => {
                 const res = await api.get(`/tuitions/${application.tuitionId}`);
@@ -180,7 +180,7 @@ const TutorDashboard = () => {
             staleTime: 1000 * 60 * 5,
             retry: false,
         })),
-    );
+    });
 
     const recentApplicationsEnriched = useMemo(() => {
         return recentApplications.map((app, index) => {

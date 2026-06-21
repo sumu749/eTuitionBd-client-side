@@ -1,5 +1,6 @@
 /* eslint-disable indent */
-import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useQuery, useQueries } from "@tanstack/react-query";
 
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
@@ -23,10 +24,34 @@ const AppliedTutors = () => {
         retry: false,
         refetchOnWindowFocus: false,
         queryFn: async () => {
-            const res = await api.get(`/applications/${user.email}`);
+            const res = await api.get(`/applications/student/${user.email}`);
             return res.data;
         },
     });
+
+    const applicationQueries = useQueries({
+        queries: data.map((application) => ({
+            queryKey: ["tutor", application.tutorEmail],
+            queryFn: async () => {
+                const res = await api.get(
+                    `/users/${encodeURIComponent(application.tutorEmail)}`,
+                );
+                return res.data;
+            },
+            enabled: !!application.tutorEmail,
+            staleTime: 1000 * 60 * 5,
+            retry: false,
+        })),
+    });
+
+    const applicationsWithTutor = useMemo(
+        () =>
+            data.map((application, index) => ({
+                ...application,
+                tutor: applicationQueries[index]?.data || null,
+            })),
+        [data, applicationQueries],
+    );
 
     const handleStatusUpdate = async (id, status) => {
         try {
@@ -46,7 +71,7 @@ const AppliedTutors = () => {
         }
     };
 
-    if (isLoading) {
+    if (isLoading || applicationQueries.some((q) => q.isLoading)) {
         return <LoadingSpinner />;
     }
 
@@ -115,7 +140,8 @@ const AppliedTutors = () => {
                         </thead>
 
                         <tbody>
-                            {data.map((application) => {
+                            {applicationsWithTutor.map((application) => {
+                                const tutor = application.tutor;
                                 const isPending =
                                     application.status === "pending";
                                 const statusClass =
@@ -130,26 +156,44 @@ const AppliedTutors = () => {
                                         <td>
                                             <div className="flex items-center gap-3">
                                                 <img
-                                                    src={application.tutorPhoto}
-                                                    alt={`${application.tutorName} profile`}
+                                                    src={
+                                                        tutor?.photoURL ||
+                                                        application.tutorPhoto ||
+                                                        "https://via.placeholder.com/40"
+                                                    }
+                                                    alt={`${
+                                                        tutor?.name ||
+                                                        application.tutorName ||
+                                                        "Tutor"
+                                                    } profile`}
                                                     className="w-10 h-10 rounded-full object-cover"
                                                 />
                                                 <div>
                                                     <div className="font-medium">
-                                                        {application.tutorName}
+                                                        {tutor?.name ||
+                                                            application.tutorName ||
+                                                            "Tutor"}
                                                     </div>
-                                                    <div className="text-sm text-base-content/60">
+                                                    <div className="text-sm text-slate-400">
                                                         Tutor ID:{" "}
-                                                        {application.tutorId ||
+                                                        {tutor?._id ||
+                                                            application.tutorId ||
                                                             "N/A"}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
 
-                                        <td>{application.tuitionSubject}</td>
-                                        <td>{application.tuitionClass}</td>
-                                        <td>৳ {application.tuitionBudget}</td>
+                                        <td>
+                                            {application.tuitionSubject ||
+                                                "N/A"}
+                                        </td>
+                                        <td>
+                                            {application.tuitionClass || "N/A"}
+                                        </td>
+                                        <td>
+                                            ৳ {application.tuitionBudget ?? "0"}
+                                        </td>
 
                                         <td>
                                             {application.qualifications ||
@@ -157,7 +201,9 @@ const AppliedTutors = () => {
                                         </td>
 
                                         <td>
-                                            {application.experience
+                                            {application.experience !==
+                                                undefined &&
+                                            application.experience !== null
                                                 ? `${application.experience} years`
                                                 : "Not specified"}
                                         </td>
@@ -169,7 +215,8 @@ const AppliedTutors = () => {
 
                                         <td>
                                             <span className={statusClass}>
-                                                {application.status}
+                                                {application.status ||
+                                                    "pending"}
                                             </span>
                                         </td>
 

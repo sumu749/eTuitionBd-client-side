@@ -3,9 +3,9 @@ import api from "../../api/api";
 
 const TransactionHistory = () => {
     const { data = [] } = useQuery({
-        queryKey: ["transactions"],
+        queryKey: ["payments-transactions"],
         queryFn: async () => {
-            const res = await api.get("/transactions");
+            const res = await api.get("/payments/transactions");
 
             return res.data;
         },
