@@ -25,6 +25,11 @@ eTuitionBd is a React + Vite based tutor and tuition marketplace web application
 
 - Live URL: `https://etuitionbd-by-sumu.web.app`
 
+## GitHub Repository Link
+- Frontend Repo: `https://github.com/sumu749/eTuitionBd-server-side`
+- Backend source code: `https://github.com/sumu749/eTuitionBd-server-side`
+
+
 ## Packages Used
 
 ### Runtime dependencies
